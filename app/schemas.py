@@ -70,6 +70,7 @@ class CandidateInput(TalentConnectBaseModel):
     skills: list[SkillName] = Field(min_length=1)
     years_of_experience: float = Field(ge=0)
     salary_expectation: SalaryRange
+    portfolio_url: str | None = None
     portfolio_projects: list[PortfolioProject] = Field(default_factory=list)
     extracted_text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=40)]
     video_transcript: Annotated[

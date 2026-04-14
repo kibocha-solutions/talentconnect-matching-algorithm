@@ -133,6 +133,9 @@ def assemble_candidate_text(candidate: CandidateInput) -> str:
     if candidate.video_transcript:
         sections.append(f"Video transcript: {candidate.video_transcript}")
 
+    if candidate.portfolio_url:
+        sections.append(f"Portfolio URL: {candidate.portfolio_url}")
+
     if candidate.portfolio_projects:
         project_summaries = []
         for project in candidate.portfolio_projects:
