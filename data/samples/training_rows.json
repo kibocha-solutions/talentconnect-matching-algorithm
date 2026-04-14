@@ -1,0 +1,50 @@
+[
+  {
+    "candidate_id": "4a4a2a6e-a45b-4fb9-bfce-7d5eafb7d21f",
+    "job_id": "bc972f3d-49fd-49d3-9c85-9ad849702ec1",
+    "required_skill_similarity": 0.97,
+    "nice_to_have_skill_similarity": 0.81,
+    "experience_gap_years": 2.0,
+    "experience_alignment_score": 1.0,
+    "salary_overlap_score": 0.92,
+    "portfolio_score": 100.0,
+    "phase1_similarity_score": 0.94,
+    "label": 1.0
+  },
+  {
+    "candidate_id": "35be09a0-09e9-49fd-a968-50f959ef7bb0",
+    "job_id": "bc972f3d-49fd-49d3-9c85-9ad849702ec1",
+    "required_skill_similarity": 0.83,
+    "nice_to_have_skill_similarity": 0.58,
+    "experience_gap_years": 0.5,
+    "experience_alignment_score": 1.0,
+    "salary_overlap_score": 0.74,
+    "portfolio_score": 30.0,
+    "phase1_similarity_score": 0.79,
+    "label": 0.78
+  },
+  {
+    "candidate_id": "1d00f0fb-f718-41b8-a887-39ccd2ece533",
+    "job_id": "bc972f3d-49fd-49d3-9c85-9ad849702ec1",
+    "required_skill_similarity": 0.66,
+    "nice_to_have_skill_similarity": 0.46,
+    "experience_gap_years": -0.5,
+    "experience_alignment_score": 0.83,
+    "salary_overlap_score": 0.61,
+    "portfolio_score": 30.0,
+    "phase1_similarity_score": 0.68,
+    "label": 0.59
+  },
+  {
+    "candidate_id": "9fd6f52c-14f9-4c8a-acd5-61e381218dd5",
+    "job_id": "bc972f3d-49fd-49d3-9c85-9ad849702ec1",
+    "required_skill_similarity": 0.31,
+    "nice_to_have_skill_similarity": 0.18,
+    "experience_gap_years": -2.0,
+    "experience_alignment_score": 0.33,
+    "salary_overlap_score": 0.22,
+    "portfolio_score": 0.0,
+    "phase1_similarity_score": 0.29,
+    "label": 0.08
+  }
+]

@@ -1,0 +1,88 @@
+{
+  "job": {
+    "job_id": "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a",
+    "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
+    "required_skills": [
+      "Python",
+      "Django"
+    ],
+    "nice_to_have_skills": [
+      "Machine Learning",
+      "FastAPI"
+    ],
+    "experience_range": {
+      "min_years": 3.0,
+      "max_years": 5.0
+    },
+    "salary_offered": {
+      "currency": "USD",
+      "min_amount": 70000.0,
+      "max_amount": 95000.0
+    },
+    "job_description_text": "Build matching services with Python, APIs, ranking logic, and platform care.",
+    "portfolio_required": false
+  },
+  "candidates": [
+    {
+      "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "Django"
+      ],
+      "years_of_experience": 4.0,
+      "salary_expectation": {
+        "currency": "USD",
+        "min_amount": 72000.0,
+        "max_amount": 90000.0
+      },
+      "portfolio_url": "https://portfolio.example.com/alex",
+      "portfolio_projects": [
+        {
+          "title": "Matching Pipeline",
+          "description": "Built a ranking pipeline with retrieval, feature extraction, and scoring layers.",
+          "technologies": [
+            "Python",
+            "FastAPI"
+          ]
+        }
+      ],
+      "extracted_text": "Prepared candidate profile with backend API experience, ranking work, and platform maintenance.",
+      "video_transcript": "I build Python services, improve APIs, and ship ranking systems for internal tools."
+    },
+    {
+      "candidate_id": "af8d129e-2633-438b-8452-f76008c49788",
+      "skills": [
+        "Python",
+        "Flask",
+        "SQL"
+      ],
+      "years_of_experience": 3.0,
+      "salary_expectation": {
+        "currency": "USD",
+        "min_amount": 68000.0,
+        "max_amount": 88000.0
+      },
+      "portfolio_projects": [],
+      "extracted_text": "Prepared candidate profile with backend service work, SQL operations, and API support experience.",
+      "video_transcript": "I maintain backend services, write SQL, and support product teams with API changes."
+    },
+    {
+      "candidate_id": "157a1f6b-a00f-4028-92c1-834d7efc0784",
+      "skills": [
+        "Excel",
+        "WordPress",
+        "Support"
+      ],
+      "years_of_experience": 1.0,
+      "salary_expectation": {
+        "currency": "USD",
+        "min_amount": 95000.0,
+        "max_amount": 120000.0
+      },
+      "portfolio_projects": [],
+      "extracted_text": "Prepared candidate profile with unrelated skills, limited engineering depth, and short experience.",
+      "video_transcript": "I have done support work and general website setup, but not backend platform engineering."
+    }
+  ]
+}
