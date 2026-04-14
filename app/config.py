@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     )
     gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
     gemini_embedding_model: str = Field(
-        default="text-embedding-004",
+        default="models/gemini-embedding-001",
         alias="GEMINI_EMBEDDING_MODEL",
     )
     local_embedding_model: str = Field(
