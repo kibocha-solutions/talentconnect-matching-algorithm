@@ -1,0 +1,127 @@
+{
+  "candidate_pool": [
+    {
+      "candidate_id": "11111111-1111-4111-8111-111111111111",
+      "skills": ["Python", "Django", "FastAPI", "SQL"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 72000.0, "max_amount": 90000.0},
+      "portfolio_url": "https://portfolio.example.com/alex",
+      "portfolio_projects": [
+        {
+          "title": "Matching Service",
+          "description": "Built a backend ranking service with retrieval, scoring, and deployment automation.",
+          "technologies": ["Python", "FastAPI", "SQL"]
+        }
+      ],
+      "extracted_text": "Prepared backend profile with production Python APIs, ranking services, and operational ownership.",
+      "video_transcript": "I build Python APIs, improve backend systems, and maintain matching services in production."
+    },
+    {
+      "candidate_id": "22222222-2222-4222-8222-222222222222",
+      "skills": ["Python", "Flask", "SQL", "REST APIs"],
+      "years_of_experience": 3.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 68000.0, "max_amount": 86000.0},
+      "portfolio_projects": [],
+      "extracted_text": "Prepared backend profile with Python service delivery, Flask APIs, and database support work.",
+      "video_transcript": "I maintain Python services, write SQL, and support product teams with API changes."
+    },
+    {
+      "candidate_id": "33333333-3333-4333-8333-333333333333",
+      "skills": ["Vue.js", "JavaScript", "CSS", "Figma"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 65000.0, "max_amount": 82000.0},
+      "portfolio_url": "https://portfolio.example.com/bea",
+      "portfolio_projects": [
+        {
+          "title": "Design System",
+          "description": "Created a component library and design system for internal products and dashboards.",
+          "technologies": ["Vue.js", "JavaScript", "CSS"]
+        }
+      ],
+      "extracted_text": "Prepared frontend profile with design systems, component libraries, and user interface delivery.",
+      "video_transcript": "I build frontend interfaces, design systems, and polished product experiences."
+    },
+    {
+      "candidate_id": "44444444-4444-4444-8444-444444444444",
+      "skills": ["React", "TypeScript", "Node.js", "GraphQL"],
+      "years_of_experience": 2.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 60000.0, "max_amount": 76000.0},
+      "portfolio_url": "https://portfolio.example.com/cam",
+      "portfolio_projects": [],
+      "extracted_text": "Prepared full-stack profile with React product work, TypeScript, and API integration tasks.",
+      "video_transcript": "I build product interfaces with React and TypeScript and support backend integration work."
+    },
+    {
+      "candidate_id": "55555555-5555-4555-8555-555555555555",
+      "skills": ["Machine Learning", "Python", "TensorFlow", "Pandas"],
+      "years_of_experience": 5.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 98000.0, "max_amount": 130000.0},
+      "portfolio_url": "https://portfolio.example.com/dee",
+      "portfolio_projects": [
+        {
+          "title": "Vision Model",
+          "description": "Trained and shipped a machine learning model with evaluation pipelines and monitoring hooks.",
+          "technologies": ["Machine Learning", "Python", "TensorFlow"]
+        }
+      ],
+      "extracted_text": "Prepared machine learning profile with model training, evaluation workflows, and data pipeline experience.",
+      "video_transcript": "I train models, evaluate results, and build supporting Python data workflows."
+    },
+    {
+      "candidate_id": "66666666-6666-4666-8666-666666666666",
+      "skills": ["Excel", "WordPress", "Support", "Data Entry"],
+      "years_of_experience": 1.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 95000.0, "max_amount": 120000.0},
+      "portfolio_projects": [],
+      "extracted_text": "Prepared generalist profile with support tasks, website setup, and administrative software experience.",
+      "video_transcript": "I have handled support tasks and general websites, but not engineering platform work."
+    }
+  ],
+  "jobs": [
+    {
+      "label": "backend-api",
+      "expected_top_candidate_id": "11111111-1111-4111-8111-111111111111",
+      "notes": "Python and Django specialist should clearly lead. Flask candidate should be medium. Salary mismatch and irrelevant skills should hurt.",
+      "job": {
+        "job_id": "aaaaaaa1-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+        "employer_id": "99999999-9999-4999-8999-999999999991",
+        "required_skills": ["Python", "Django"],
+        "nice_to_have_skills": ["FastAPI", "SQL"],
+        "experience_range": {"min_years": 3.0, "max_years": 5.0},
+        "salary_offered": {"currency": "USD", "min_amount": 70000.0, "max_amount": 95000.0},
+        "job_description_text": "Build backend matching services with Python, Django, SQL, and API platform ownership.",
+        "portfolio_required": false
+      }
+    },
+    {
+      "label": "frontend-product",
+      "expected_top_candidate_id": "33333333-3333-4333-8333-333333333333",
+      "notes": "Vue candidate is the obvious top fit. React candidate is related-but-not-identical and should still rank reasonably high.",
+      "job": {
+        "job_id": "aaaaaaa2-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+        "employer_id": "99999999-9999-4999-8999-999999999992",
+        "required_skills": ["Vue.js", "JavaScript"],
+        "nice_to_have_skills": ["CSS", "Figma"],
+        "experience_range": {"min_years": 3.0, "max_years": 5.0},
+        "salary_offered": {"currency": "USD", "min_amount": 62000.0, "max_amount": 85000.0},
+        "job_description_text": "Build product interfaces with Vue, JavaScript, design systems, and close collaboration with design.",
+        "portfolio_required": true
+      }
+    },
+    {
+      "label": "ml-engineer",
+      "expected_top_candidate_id": "55555555-5555-4555-8555-555555555555",
+      "notes": "Machine learning candidate should lead on skill depth but salary mismatch should still be visible as a penalty.",
+      "job": {
+        "job_id": "aaaaaaa3-aaaa-4aaa-8aaa-aaaaaaaaaaa3",
+        "employer_id": "99999999-9999-4999-8999-999999999993",
+        "required_skills": ["Machine Learning", "Python"],
+        "nice_to_have_skills": ["TensorFlow", "Pandas"],
+        "experience_range": {"min_years": 4.0, "max_years": 6.0},
+        "salary_offered": {"currency": "USD", "min_amount": 80000.0, "max_amount": 95000.0},
+        "job_description_text": "Train and evaluate machine learning systems with Python, TensorFlow, and production data workflows.",
+        "portfolio_required": true
+      }
+    }
+  ]
+}
