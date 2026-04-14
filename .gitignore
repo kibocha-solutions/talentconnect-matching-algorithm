@@ -1,0 +1,45 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+.idea/
+.vscode/
+
+# Project artifacts
+models/
+data/processed/
+
+# Temporarily uncomment before first commit to exclude agent-local files
+# AGENTS.md
+# copilot-instructions.md
+# .github/copilot-instructions.md
