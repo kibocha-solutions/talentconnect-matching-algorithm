@@ -5,8 +5,7 @@ from math import sqrt
 
 from app.config import get_settings
 from app.embeddings.base import EmbeddingProvider, EmbeddingVector
-from app.embeddings.gemini_provider import GeminiEmbeddingProvider
-from app.embeddings.local_provider import LocalEmbeddingProvider
+from app.embeddings.factory import build_embedding_provider
 from app.schemas import CandidateInput, JobInput
 
 
@@ -27,17 +26,6 @@ class RetrievalResult:
     provider_name: str
     model_name: str
     shortlist_size_limit: int
-
-
-def build_embedding_provider() -> EmbeddingProvider:
-    """Instantiate the configured embedding backend through project settings."""
-
-    settings = get_settings()
-    settings.validate_embedding_provider()
-
-    if settings.prefers_gemini_embeddings:
-        return GeminiEmbeddingProvider()
-    return LocalEmbeddingProvider()
 
 
 class InMemorySemanticRetriever:

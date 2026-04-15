@@ -181,6 +181,11 @@ Practical notes:
 
 - Use `EMBEDDING_PROVIDER=local` for the most self-contained local runs.
 - Use `EMBEDDING_PROVIDER=gemini` only when `GEMINI_API_KEY` is set.
+- Default pipeline entrypoints honor `EMBEDDING_PROVIDER` from config.
+- When Gemini is configured, the default script and pipeline paths try
+  Gemini first and fall back to local embeddings only when Gemini is
+  unavailable or rate-limited. That fallback is surfaced in script
+  output and the external evaluation results artifact.
 - Model artifacts are stored in `models/` by default.
 
 ## How To Train The Model
@@ -292,6 +297,9 @@ Current external-evaluation takeaway:
 - the current system produced the correct manual top-1 match on all
   3 jobs
 - close-call ordering among adjacent strong candidates remains imperfect
+- the latest rerun honored `EMBEDDING_PROVIDER=gemini`, attempted Gemini
+  first, and explicitly fell back to the local embedding model when the
+  Gemini embedding API returned a quota error
 
 This means the system is behaving credibly as a shortlist-assistance
 prototype, but it is not strong enough to be treated as a reliable final

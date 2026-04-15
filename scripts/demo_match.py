@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.embeddings.local_provider import LocalEmbeddingProvider
+from app.embeddings.factory import build_embedding_provider, resolve_provider_metadata
 from app.features.extractor import CandidateJobFeatureExtractor
 from app.pipeline import build_matching_pipeline
 from app.ranking.ranker import XGBoostMatchRanker
@@ -65,7 +65,7 @@ def main() -> int:
         args = parse_args()
         candidates, job = load_demo_data(args.demo_data.resolve())
 
-        embedding_provider = LocalEmbeddingProvider()
+        embedding_provider = build_embedding_provider()
         retriever = InMemorySemanticRetriever(
             embedding_provider=embedding_provider,
             shortlist_size=args.shortlist_size,
@@ -80,10 +80,13 @@ def main() -> int:
             ranker=ranker,
         )
         result = pipeline.run(candidates, job)
+        provider_metadata = resolve_provider_metadata(embedding_provider)
 
         print("Demo match completed")
         print(f"retrieval provider: {result.retrieval_result.provider_name}")
         print(f"retrieval model: {result.retrieval_result.model_name}")
+        if provider_metadata.fallback_triggered:
+            print(f"embedding fallback: {provider_metadata.fallback_reason}")
         print(f"shortlisted candidates: {len(result.retrieval_result.shortlisted_candidates)}")
         print()
         for index, ranked_row in enumerate(result.ranked_rows, start=1):

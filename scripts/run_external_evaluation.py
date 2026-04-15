@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.embeddings.local_provider import LocalEmbeddingProvider
+from app.embeddings.factory import build_embedding_provider, resolve_provider_metadata
 from app.features.extractor import CandidateJobFeatureExtractor
 from app.pipeline import build_matching_pipeline
 from app.ranking.ranker import XGBoostMatchRanker
@@ -100,8 +100,8 @@ def summarize_ranked_row(
 
 
 def build_pipeline(shortlist_size: int):
-    embedding_provider = LocalEmbeddingProvider()
-    return build_matching_pipeline(
+    embedding_provider = build_embedding_provider()
+    pipeline = build_matching_pipeline(
         retriever=InMemorySemanticRetriever(
             embedding_provider=embedding_provider,
             shortlist_size=shortlist_size,
@@ -111,6 +111,7 @@ def build_pipeline(shortlist_size: int):
         ),
         ranker=XGBoostMatchRanker(),
     )
+    return pipeline, embedding_provider
 
 
 def main() -> int:
@@ -129,7 +130,7 @@ def main() -> int:
 
         alias_map = build_alias_map(manual_review)
         manual_job_map = build_manual_job_map(manual_review)
-        pipeline = build_pipeline(shortlist_size=args.shortlist_size)
+        pipeline, embedding_provider = build_pipeline(shortlist_size=args.shortlist_size)
 
         job_results: list[dict[str, Any]] = []
         top_1_matches = 0
@@ -207,10 +208,18 @@ def main() -> int:
                 }
             )
 
+        provider_metadata = resolve_provider_metadata(embedding_provider)
         results_payload = {
             "dataset_label": dataset["dataset_label"],
             "candidate_pool_size": len(candidate_pool),
             "jobs_evaluated": len(dataset["jobs"]),
+            "embedding_provider": {
+                "requested_provider": provider_metadata.requested_provider,
+                "active_provider": provider_metadata.active_provider,
+                "model_name": provider_metadata.model_name,
+                "fallback_triggered": provider_metadata.fallback_triggered,
+                "fallback_reason": provider_metadata.fallback_reason,
+            },
             "summary": {
                 "top_1_matches": top_1_matches,
                 "jobs_with_expected_top_in_top_3": top_3_contains_expected_top,
@@ -229,6 +238,16 @@ def main() -> int:
 
         print(f"candidate pool size: {len(candidate_pool)}")
         print(f"jobs evaluated: {len(dataset['jobs'])}")
+        print(
+            "embedding provider: "
+            f"requested={provider_metadata.requested_provider} "
+            f"active={provider_metadata.active_provider}"
+        )
+        print(f"embedding model: {provider_metadata.model_name}")
+        if provider_metadata.fallback_triggered:
+            print(f"fallback: yes - {provider_metadata.fallback_reason}")
+        else:
+            print("fallback: no")
         print(
             f"top-1 matches: {top_1_matches}/{len(dataset['jobs'])}"
         )

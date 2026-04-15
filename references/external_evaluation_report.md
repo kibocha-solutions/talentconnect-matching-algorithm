@@ -2,12 +2,31 @@
 
 ## Purpose
 
-This pass compares manual human review against the current local ranking
+This pass compares manual human review against the current ranking
 algorithm on a small but more realistic external dataset.
 
 The goal was not statistical rigor. The goal was to test whether the
 system behaves sensibly when given public job-posting inputs and a
 believable anonymized candidate pool built from public resume examples.
+
+## Execution Context
+
+The evaluation script now honors `EMBEDDING_PROVIDER` from settings
+before it builds the pipeline.
+
+For the latest rerun of
+`.venv/bin/python scripts/run_external_evaluation.py --shortlist-size 20`,
+the configured provider was Gemini. The script attempted Gemini first,
+received a `429 RESOURCE_EXHAUSTED` quota error from the Gemini
+embedding API, and then explicitly fell back to the local embedding
+provider.
+
+The resulting evaluation artifact therefore records:
+
+- requested provider: `gemini`
+- active provider after fallback: `local`
+- active model: `sentence-transformers/all-MiniLM-L6-v2`
+- fallback reason: Gemini quota exhaustion during embedding
 
 ## Sources Used
 
@@ -126,49 +145,49 @@ Reasoning:
 
 Actual top 5:
 
-1. `candidate-01-backend-api` - 92.34
-2. `candidate-03-platform-observability` - 89.23
-3. `candidate-19-backend-eventing` - 85.46
+1. `candidate-01-backend-api` - 88.78
+2. `candidate-19-backend-eventing` - 88.30
+3. `candidate-18-devops-backend` - 84.81
 4. `candidate-05-fullstack-react-python` - 78.48
-5. `candidate-18-devops-backend` - 73.79
+5. `candidate-03-platform-observability` - 78.24
 
 Low-fit placements:
 
 - `candidate-16-support-generalist` ranked 20th
-- `candidate-17-junior-web` ranked 15th
+- `candidate-17-junior-web` ranked 17th
 - `candidate-06-frontend-design-system` ranked 14th
 
 ### Frontend React / TypeScript job
 
 Actual top 5:
 
-1. `candidate-06-frontend-design-system` - 97.27
-2. `candidate-07-frontend-product` - 90.39
-3. `candidate-05-fullstack-react-python` - 85.46
-4. `candidate-09-mobile-frontend` - 71.79
-5. `candidate-08-frontend-vue` - 66.81
+1. `candidate-06-frontend-design-system` - 92.29
+2. `candidate-07-frontend-product` - 91.99
+3. `candidate-05-fullstack-react-python` - 87.78
+4. `candidate-09-mobile-frontend` - 77.77
+5. `candidate-08-frontend-vue` - 74.38
 
 Low-fit placements:
 
 - `candidate-16-support-generalist` ranked 20th
-- `candidate-11-ml-vision` ranked 11th
-- `candidate-19-backend-eventing` ranked 9th
+- `candidate-11-ml-vision` ranked 10th
+- `candidate-19-backend-eventing` ranked 13th
 
 ### ML platform engineer job
 
 Actual top 5:
 
-1. `candidate-13-mlops-pipeline` - 97.27
-2. `candidate-11-ml-vision` - 90.72
-3. `candidate-03-platform-observability` - 82.68
+1. `candidate-13-mlops-pipeline` - 92.90
+2. `candidate-11-ml-vision` - 92.34
+3. `candidate-20-ml-nlp` - 81.87
 4. `candidate-12-applied-ml` - 78.48
-5. `candidate-20-ml-nlp` - 78.48
+5. `candidate-03-platform-observability` - 76.74
 
 Low-fit placements:
 
 - `candidate-16-support-generalist` ranked 20th
-- `candidate-17-junior-web` ranked 14th
-- `candidate-08-frontend-vue` ranked 15th
+- `candidate-17-junior-web` ranked 15th
+- `candidate-08-frontend-vue` ranked 17th
 
 ## Where The Algorithm Matched Human Judgment
 
@@ -177,27 +196,20 @@ Low-fit placements:
   all 3 jobs.
 - It handled the frontend job especially well. The full expected top 3
   appeared in the exact expected order.
-- It correctly rewarded the MLOps-shaped candidate for the ML job rather
-  than over-favoring a pure research or NLP profile.
+- It correctly rewarded the MLOps-shaped candidate for the ML job and
+  kept the expected top candidate at rank 1.
 
 ## Where The Algorithm Diverged
 
 - Backend job:
-  The model preferred `candidate-03-platform-observability` over
-  `candidate-19-backend-eventing` and `candidate-18-devops-backend`.
-  That is not absurd, but it likely over-rewarded adjacent platform and
-  observability language relative to direct API and message-processing
-  overlap.
-- Backend job:
   `candidate-05-fullstack-react-python` landed 4th and beat a more
-  backend-platform-shaped profile. That feels a bit generous.
+  platform-observability-shaped profile. That still feels a bit generous.
 - ML job:
-  `candidate-03-platform-observability` ranked 3rd ahead of
-  `candidate-12-applied-ml`. This is the clearest questionable result in
-  the run. The model seems willing to reward infrastructure alignment and
-  strong semantic similarity even when direct ML depth is thinner.
+  `candidate-20-ml-nlp` ranked 3rd ahead of `candidate-12-applied-ml`.
+  This is still a plausible shortlist outcome, but it is the clearest
+  remaining close-call disagreement with the manual review.
 - Frontend job:
-  A backend engineer still reached 9th and an ML engineer reached 11th.
+  A backend engineer still reached 13th and an ML engineer reached 10th.
   Those are not dangerous results, but they show the system does not
   sharply collapse unrelated technical profiles once they share generic
   engineering language.
@@ -217,8 +229,8 @@ Low-fit placements:
   required-skill similarity, nice-to-have similarity, experience,
   salary overlap, portfolio heuristic, and phase-1 semantic similarity.
 - Because of that, adjacent technical language can travel too far.
-  Platform, data, and backend candidates can stay competitive on ML or
-  frontend jobs if their summaries mention enough shared engineering
+  Full-stack, ML, and platform-adjacent candidates can stay competitive
+  on nearby roles if their summaries mention enough shared engineering
   concepts.
 - The portfolio scoring is intentionally simple. Many strong candidates
   receive the same `100` portfolio score, so that field stops helping

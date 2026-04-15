@@ -4,9 +4,8 @@ from dataclasses import dataclass
 from math import isfinite
 from typing import ClassVar
 
-from app.config import get_settings
 from app.embeddings.base import EmbeddingProvider, EmbeddingVector
-from app.embeddings.local_provider import LocalEmbeddingProvider
+from app.embeddings.factory import build_embedding_provider
 from app.retrieval.retriever import RetrievalCandidate, cosine_similarity
 from app.schemas import CandidateInput, JobInput
 
@@ -53,10 +52,7 @@ class CandidateJobFeatureExtractor:
     """Extract clean numeric ranking features from prepared candidate-job pairs."""
 
     def __init__(self, embedding_provider: EmbeddingProvider | None = None) -> None:
-        settings = get_settings()
-        self._embedding_provider = embedding_provider or LocalEmbeddingProvider(
-            settings.local_embedding_model
-        )
+        self._embedding_provider = embedding_provider or build_embedding_provider()
 
     def extract(
         self,

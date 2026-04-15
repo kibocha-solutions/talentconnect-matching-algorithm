@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.embeddings.local_provider import LocalEmbeddingProvider
+from app.embeddings.factory import build_embedding_provider, resolve_provider_metadata
 from app.features.extractor import CandidateJobFeatureExtractor
 from app.pipeline import build_matching_pipeline
 from app.ranking.ranker import XGBoostMatchRanker
@@ -53,7 +53,7 @@ def main() -> int:
         args = parse_args()
         payload = load_evaluation_data(args.evaluation_data.resolve())
 
-        embedding_provider = LocalEmbeddingProvider()
+        embedding_provider = build_embedding_provider()
         pipeline = build_matching_pipeline(
             retriever=InMemorySemanticRetriever(
                 embedding_provider=embedding_provider,
@@ -67,9 +67,20 @@ def main() -> int:
 
         candidate_pool = payload["candidate_pool"]
         total_cases = len(candidate_pool) * len(payload["jobs"])
+        provider_metadata = resolve_provider_metadata(embedding_provider)
         print(f"candidate-job cases: {total_cases}")
         print(f"candidate pool size: {len(candidate_pool)}")
         print(f"jobs evaluated: {len(payload['jobs'])}")
+        print(
+            "embedding provider: "
+            f"requested={provider_metadata.requested_provider} "
+            f"active={provider_metadata.active_provider}"
+        )
+        print(f"embedding model: {provider_metadata.model_name}")
+        if provider_metadata.fallback_triggered:
+            print(f"fallback: yes - {provider_metadata.fallback_reason}")
+        else:
+            print("fallback: no")
         print()
 
         for job_case in payload["jobs"]:
