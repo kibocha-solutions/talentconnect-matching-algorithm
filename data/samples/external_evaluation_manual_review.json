@@ -1,0 +1,268 @@
+{
+  "review_label": "manual-review-before-model-run-apr-2026",
+  "candidate_catalog": [
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000001",
+      "alias": "candidate-01-backend-api",
+      "source_basis": ["backend resume example", "software engineer resume example"],
+      "summary": "Backend API engineer with Python, FastAPI, SQL, Kafka, Docker, and AWS."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000002",
+      "alias": "candidate-02-backend-django",
+      "source_basis": ["backend developer resume example"],
+      "summary": "Backend engineer with Django, REST APIs, PostgreSQL, and AWS."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000003",
+      "alias": "candidate-03-platform-observability",
+      "source_basis": ["software engineer resume example", "data engineer resume example"],
+      "summary": "Platform-minded engineer with Python automation, Kubernetes, Terraform, and observability."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000004",
+      "alias": "candidate-04-data-platform",
+      "source_basis": ["data engineer resume example"],
+      "summary": "Data-platform engineer with Python, SQL, Airflow, BigQuery, and ETL."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000005",
+      "alias": "candidate-05-fullstack-react-python",
+      "source_basis": ["react developer resume example", "backend resume example"],
+      "summary": "Balanced full-stack engineer with React, TypeScript, Python, FastAPI, and SQL."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000006",
+      "alias": "candidate-06-frontend-design-system",
+      "source_basis": ["react developer resume example"],
+      "summary": "Frontend specialist with React, TypeScript, Jest, Figma, CSS, and design systems."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000007",
+      "alias": "candidate-07-frontend-product",
+      "source_basis": ["react developer resume example"],
+      "summary": "Frontend product engineer with React, TypeScript, Next.js, Redux, GraphQL, and Jest."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000008",
+      "alias": "candidate-08-frontend-vue",
+      "source_basis": ["frontend resume example"],
+      "summary": "Frontend UI engineer with Vue, JavaScript, CSS, Figma, and Storybook."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000009",
+      "alias": "candidate-09-mobile-frontend",
+      "source_basis": ["react developer resume example"],
+      "summary": "TypeScript-heavy mobile frontend engineer using React Native and GraphQL."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000010",
+      "alias": "candidate-10-qa-automation",
+      "source_basis": ["frontend quality resume example"],
+      "summary": "Quality engineer specializing in Playwright, Cypress, Jest, and TypeScript."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000011",
+      "alias": "candidate-11-ml-vision",
+      "source_basis": ["machine learning engineer resume example"],
+      "summary": "ML engineer with Python, TensorFlow, PyTorch, Pandas, OpenCV, and production modeling."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000012",
+      "alias": "candidate-12-applied-ml",
+      "source_basis": ["machine learning resume example"],
+      "summary": "Applied ML engineer using Python, SQL, Pandas, XGBoost, and experimentation pipelines."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000013",
+      "alias": "candidate-13-mlops-pipeline",
+      "source_basis": ["machine learning engineer resume example", "data engineer resume example"],
+      "summary": "MLOps profile with Python, TensorFlow, Airflow, Kubernetes, GCP, and production pipelines."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000014",
+      "alias": "candidate-14-data-engineer",
+      "source_basis": ["data engineer resume example"],
+      "summary": "Data engineer with Python, SQL, Airflow, Spark, BigQuery, and warehouse operations."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000015",
+      "alias": "candidate-15-analytics-engineer",
+      "source_basis": ["analytics engineer resume example"],
+      "summary": "Analytics engineer with SQL, dbt, Python, and semantic modeling."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000016",
+      "alias": "candidate-16-support-generalist",
+      "source_basis": ["generic non-engineering resume examples"],
+      "summary": "Low-fit generalist with spreadsheet, support, and WordPress work."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000017",
+      "alias": "candidate-17-junior-web",
+      "source_basis": ["junior web developer resume example"],
+      "summary": "Junior web profile with JavaScript, HTML, CSS, and light Node.js exposure."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000018",
+      "alias": "candidate-18-devops-backend",
+      "source_basis": ["software engineer resume example", "backend developer resume example"],
+      "summary": "Backend-platform engineer with Python, Docker, Kubernetes, Terraform, AWS, and SQL."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000019",
+      "alias": "candidate-19-backend-eventing",
+      "source_basis": ["backend developer resume example"],
+      "summary": "Backend engineer with Python, FastAPI, Redis, Kafka, PostgreSQL, and REST APIs."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000020",
+      "alias": "candidate-20-ml-nlp",
+      "source_basis": ["machine learning engineer resume example"],
+      "summary": "ML engineer with Python, PyTorch, transformers, NLP, and evaluation workflows."
+    }
+  ],
+  "jobs": [
+    {
+      "label": "backend-api-observability",
+      "expected_top_candidate_id": "10000000-0000-4000-8000-000000000001",
+      "expected_top_3_candidate_ids": [
+        "10000000-0000-4000-8000-000000000001",
+        "10000000-0000-4000-8000-000000000019",
+        "10000000-0000-4000-8000-000000000018"
+      ],
+      "obvious_low_fit_candidate_ids": [
+        "10000000-0000-4000-8000-000000000016",
+        "10000000-0000-4000-8000-000000000017",
+        "10000000-0000-4000-8000-000000000006"
+      ],
+      "notes": "FastAPI, REST, SQL, and production service operations matter most. Kafka or platform depth should help, while clearly non-backend profiles should fall to the bottom.",
+      "judgments": [
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000001",
+          "judgment": "expected-top-1",
+          "reason": "Best direct overlap across Python, FastAPI, SQL, Kafka, Docker, and AWS with clear production API project evidence."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000019",
+          "judgment": "expected-top-3",
+          "reason": "Very strong backend overlap and eventing depth, but slightly narrower cloud-platform evidence than candidate 01."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000018",
+          "judgment": "expected-top-3",
+          "reason": "Excellent infrastructure and deployment match for observability-heavy backend work, though less API-specific than candidates 01 and 19."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000016",
+          "judgment": "expected-low-fit",
+          "reason": "No meaningful software-engineering or API background."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000017",
+          "judgment": "expected-low-fit",
+          "reason": "Too junior and too shallow for backend systems and observability ownership."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000006",
+          "judgment": "expected-low-fit",
+          "reason": "Strong engineer, but skill profile is frontend-design-system work rather than backend API infrastructure."
+        }
+      ]
+    },
+    {
+      "label": "frontend-react-typescript",
+      "expected_top_candidate_id": "10000000-0000-4000-8000-000000000006",
+      "expected_top_3_candidate_ids": [
+        "10000000-0000-4000-8000-000000000006",
+        "10000000-0000-4000-8000-000000000007",
+        "10000000-0000-4000-8000-000000000005"
+      ],
+      "obvious_low_fit_candidate_ids": [
+        "10000000-0000-4000-8000-000000000016",
+        "10000000-0000-4000-8000-000000000011",
+        "10000000-0000-4000-8000-000000000019"
+      ],
+      "notes": "React and TypeScript should dominate. Design-system and testing depth deserve extra credit, while non-frontend specialists should stay clearly below the real UI candidates.",
+      "judgments": [
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000006",
+          "judgment": "expected-top-1",
+          "reason": "Most directly aligned profile with React, TypeScript, Jest, Figma, and design-system work in a senior-looking package."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000007",
+          "judgment": "expected-top-3",
+          "reason": "Excellent React and TypeScript overlap, though more product-feature oriented and slightly less design-system heavy than candidate 06."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000005",
+          "judgment": "expected-top-3",
+          "reason": "Full-stack candidate should still rate well because of strong React and TypeScript credibility, but not above the frontend specialists."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000016",
+          "judgment": "expected-low-fit",
+          "reason": "No frontend engineering depth."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000011",
+          "judgment": "expected-low-fit",
+          "reason": "Strong ML background, but wrong domain and skill mix for a React lead role."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000019",
+          "judgment": "expected-low-fit",
+          "reason": "Good backend engineer, but lacks the React and TypeScript focus the role centers on."
+        }
+      ]
+    },
+    {
+      "label": "ml-platform-engineer",
+      "expected_top_candidate_id": "10000000-0000-4000-8000-000000000013",
+      "expected_top_3_candidate_ids": [
+        "10000000-0000-4000-8000-000000000013",
+        "10000000-0000-4000-8000-000000000011",
+        "10000000-0000-4000-8000-000000000012"
+      ],
+      "obvious_low_fit_candidate_ids": [
+        "10000000-0000-4000-8000-000000000016",
+        "10000000-0000-4000-8000-000000000017",
+        "10000000-0000-4000-8000-000000000008"
+      ],
+      "notes": "The role blends model work and production ML operations. TensorFlow plus pipeline infrastructure should beat pure research or pure data candidates, while clearly non-ML profiles should sink.",
+      "judgments": [
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000013",
+          "judgment": "expected-top-1",
+          "reason": "Strongest blend of TensorFlow, Python, orchestration, cloud, and production ML pipeline maintenance."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000011",
+          "judgment": "expected-top-3",
+          "reason": "Deep ML credibility and TensorFlow fit, though less directly aligned with orchestration and GCP-heavy pipeline operations."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000012",
+          "judgment": "expected-top-3",
+          "reason": "Strong applied-ML and evaluation background, but weaker direct overlap with TensorFlow and infrastructure tooling."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000016",
+          "judgment": "expected-low-fit",
+          "reason": "No ML or engineering basis."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000017",
+          "judgment": "expected-low-fit",
+          "reason": "Entry-level web profile without machine-learning or pipeline experience."
+        },
+        {
+          "candidate_id": "10000000-0000-4000-8000-000000000008",
+          "judgment": "expected-low-fit",
+          "reason": "Frontend UI specialist, not an ML or data-pipeline profile."
+        }
+      ]
+    }
+  ]
+}

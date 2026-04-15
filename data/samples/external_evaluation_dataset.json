@@ -1,0 +1,384 @@
+{
+  "dataset_label": "external-public-composite-evaluation-apr-2026",
+  "notes": [
+    "Jobs come from public job postings on the web.",
+    "Candidates are anonymized composite profiles derived from public resume-example sources.",
+    "Salary ranges are normalized assumptions for evaluation because the project schema requires them and some source postings do not publish compensation."
+  ],
+  "source_urls": {
+    "jobs": [
+      "https://jobs.lever.co/apolloresearch/94581287-e3ac-40b6-90e2-438e0ca9064a",
+      "https://jobs.lever.co/relay/c6b3b4ee-c526-4ebf-af06-a8f9e9090178",
+      "https://jobs.lever.co/osaro/0b82d7e0-bed2-46d0-841f-336c1bc637bd"
+    ],
+    "resume_examples": [
+      "https://resumeworded.com/backend-developer-resume-example",
+      "https://www.beamjobs.com/resumes/react-developer-resume-examples",
+      "https://resumeworded.com/react-developer-resume-example",
+      "https://www.beamjobs.com/resumes/machine-learning-resume-examples",
+      "https://resumeworded.com/machine-learning-engineer-resume-example",
+      "https://resumeworded.com/data-engineer-resume-example",
+      "https://www.beamjobs.com/resumes/data-engineer-resume-examples",
+      "https://www.beamjobs.com/resumes/data-analytics-engineer-resume-examples"
+    ]
+  },
+  "candidate_pool": [
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000001",
+      "skills": ["Python", "FastAPI", "SQL", "Docker", "Kafka", "AWS"],
+      "years_of_experience": 6.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 140000.0, "max_amount": 165000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-01",
+      "portfolio_projects": [
+        {
+          "title": "API Observability Platform",
+          "description": "Built Python APIs and event pipelines for monitoring logs, alerts, and customer-facing integrations.",
+          "technologies": ["Python", "FastAPI", "SQL", "Kafka"]
+        }
+      ],
+      "extracted_text": "Composite backend profile with production Python API ownership, SQL design, containerized deployment, and distributed-event experience.",
+      "video_transcript": "I build Python APIs, maintain data-intensive services, and improve production observability with practical delivery habits."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000002",
+      "skills": ["Python", "Django", "REST APIs", "PostgreSQL", "AWS"],
+      "years_of_experience": 5.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 132000.0, "max_amount": 152000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-02",
+      "portfolio_projects": [
+        {
+          "title": "Internal Service Gateway",
+          "description": "Owned Django APIs, PostgreSQL schema design, and release rollouts for internal business systems.",
+          "technologies": ["Python", "Django", "REST APIs", "PostgreSQL"]
+        }
+      ],
+      "extracted_text": "Composite backend developer profile centered on Django services, API design, schema changes, and reliable cloud delivery.",
+      "video_transcript": "My work focuses on Django APIs, relational data design, and stable service releases across product teams."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000003",
+      "skills": ["Python", "Go", "Kubernetes", "Terraform", "Observability", "SQL"],
+      "years_of_experience": 7.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 150000.0, "max_amount": 178000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-03",
+      "portfolio_projects": [
+        {
+          "title": "Platform Reliability Toolkit",
+          "description": "Created deployment and telemetry tooling for internal services with metrics, traces, and cluster automation.",
+          "technologies": ["Python", "Kubernetes", "Terraform", "Observability"]
+        }
+      ],
+      "extracted_text": "Composite platform engineer profile with strong infrastructure depth, Python automation, and service reliability ownership.",
+      "video_transcript": "I automate platform operations, improve observability, and support backend teams running production services at scale."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000004",
+      "skills": ["Python", "SQL", "Airflow", "BigQuery", "ETL"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 122000.0, "max_amount": 142000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-04",
+      "portfolio_projects": [
+        {
+          "title": "Warehouse Ingestion Pipelines",
+          "description": "Built Airflow-driven ETL jobs and warehouse models that improved freshness and downstream analytics quality.",
+          "technologies": ["Python", "SQL", "Airflow", "BigQuery"]
+        }
+      ],
+      "extracted_text": "Composite data-platform profile with Python, SQL, orchestration, warehouse modeling, and steady pipeline operations.",
+      "video_transcript": "I build data pipelines, tune SQL transformations, and keep warehouse jobs reliable for analytics and ML teams."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000005",
+      "skills": ["React", "TypeScript", "Python", "FastAPI", "SQL"],
+      "years_of_experience": 5.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 130000.0, "max_amount": 150000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-05",
+      "portfolio_projects": [
+        {
+          "title": "Operations Dashboard",
+          "description": "Delivered React and TypeScript interfaces paired with Python APIs and SQL-backed reporting workflows.",
+          "technologies": ["React", "TypeScript", "Python", "FastAPI"]
+        }
+      ],
+      "extracted_text": "Composite full-stack profile with modern React interfaces, Python APIs, and collaborative product delivery experience.",
+      "video_transcript": "I build React frontends, support Python backends, and connect product work across APIs, data, and design."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000006",
+      "skills": ["React", "TypeScript", "Figma", "Jest", "CSS", "Design Systems"],
+      "years_of_experience": 6.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 138000.0, "max_amount": 158000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-06",
+      "portfolio_projects": [
+        {
+          "title": "Shared UI Foundation",
+          "description": "Built accessible design-system components, testing standards, and reusable interaction patterns for product teams.",
+          "technologies": ["React", "TypeScript", "Jest", "Figma"]
+        }
+      ],
+      "extracted_text": "Composite frontend design-systems profile with React, TypeScript, testing depth, and close design collaboration.",
+      "video_transcript": "My strongest work is building polished React systems with TypeScript, accessibility, testing, and design partnership."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000007",
+      "skills": ["React", "TypeScript", "Next.js", "Redux", "GraphQL", "Jest"],
+      "years_of_experience": 5.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 136000.0, "max_amount": 156000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-07",
+      "portfolio_projects": [
+        {
+          "title": "Growth Product Frontend",
+          "description": "Owned React product flows, state management, and performance tuning for customer-facing subscription features.",
+          "technologies": ["React", "TypeScript", "Next.js", "Redux"]
+        }
+      ],
+      "extracted_text": "Composite frontend product engineer profile with strong React and TypeScript depth, testing, and feature ownership.",
+      "video_transcript": "I ship React product features end to end, improve state patterns, and keep complex interfaces maintainable."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000008",
+      "skills": ["Vue.js", "JavaScript", "CSS", "Figma", "Storybook"],
+      "years_of_experience": 4.5,
+      "salary_expectation": {"currency": "USD", "min_amount": 118000.0, "max_amount": 138000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-08",
+      "portfolio_projects": [
+        {
+          "title": "Commerce Interface Library",
+          "description": "Created reusable UI components and collaborated with design on responsive storefront experiences.",
+          "technologies": ["Vue.js", "JavaScript", "CSS", "Figma"]
+        }
+      ],
+      "extracted_text": "Composite frontend profile centered on JavaScript UI work, visual polish, component reuse, and design-tool fluency.",
+      "video_transcript": "I build component libraries, collaborate with designers, and care deeply about responsive user interfaces."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000009",
+      "skills": ["React Native", "TypeScript", "GraphQL", "Jest", "Performance"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 124000.0, "max_amount": 144000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-09",
+      "portfolio_projects": [
+        {
+          "title": "Cross-Platform Mobile Client",
+          "description": "Built mobile experiences with shared TypeScript logic, GraphQL data flows, and automated testing.",
+          "technologies": ["React Native", "TypeScript", "GraphQL", "Jest"]
+        }
+      ],
+      "extracted_text": "Composite mobile-leaning frontend profile with TypeScript, testing, and user-interface performance optimization experience.",
+      "video_transcript": "I build polished TypeScript interfaces, especially on mobile, and focus on reliability, testing, and responsive behavior."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000010",
+      "skills": ["Cypress", "Playwright", "Jest", "TypeScript", "Testing"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 108000.0, "max_amount": 128000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-10",
+      "portfolio_projects": [
+        {
+          "title": "Frontend Test Harness",
+          "description": "Created browser automation and regression suites that raised confidence for high-traffic user journeys.",
+          "technologies": ["Cypress", "Playwright", "Jest", "TypeScript"]
+        }
+      ],
+      "extracted_text": "Composite quality-focused profile with browser automation, TypeScript tooling, and frontend test architecture experience.",
+      "video_transcript": "I specialize in automated testing, quality workflows, and helping product teams ship stable frontend changes."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000011",
+      "skills": ["Python", "TensorFlow", "PyTorch", "Pandas", "OpenCV", "Machine Learning"],
+      "years_of_experience": 6.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 148000.0, "max_amount": 175000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-11",
+      "portfolio_projects": [
+        {
+          "title": "Vision Model Evaluation Stack",
+          "description": "Built and tuned computer-vision models, experiment tracking, and error analysis workflows for production use.",
+          "technologies": ["Python", "TensorFlow", "PyTorch", "OpenCV"]
+        }
+      ],
+      "extracted_text": "Composite machine-learning profile with strong model-development depth, Python experimentation, and computer-vision delivery.",
+      "video_transcript": "I train and evaluate production ML systems, with a focus on vision workloads, Python tooling, and measurable accuracy gains."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000012",
+      "skills": ["Python", "Scikit-Learn", "XGBoost", "Pandas", "SQL", "Machine Learning"],
+      "years_of_experience": 5.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 138000.0, "max_amount": 158000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-12",
+      "portfolio_projects": [
+        {
+          "title": "Recommendation Ranking Service",
+          "description": "Built classical ML pipelines, feature engineering jobs, and model-evaluation dashboards for recommendation workflows.",
+          "technologies": ["Python", "XGBoost", "Pandas", "SQL"]
+        }
+      ],
+      "extracted_text": "Composite applied-ML profile centered on classical modeling, feature pipelines, and practical experimentation with business metrics.",
+      "video_transcript": "I build ML systems with Python, SQL, and robust evaluation, usually where experimentation speed matters more than novelty."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000013",
+      "skills": ["Python", "TensorFlow", "Kubernetes", "Airflow", "Google Cloud Platform", "Machine Learning"],
+      "years_of_experience": 5.5,
+      "salary_expectation": {"currency": "USD", "min_amount": 152000.0, "max_amount": 178000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-13",
+      "portfolio_projects": [
+        {
+          "title": "ML Pipeline Operations",
+          "description": "Managed model-training pipelines, orchestration, cloud storage, and validation workflows for production ML teams.",
+          "technologies": ["Python", "TensorFlow", "Airflow", "Google Cloud Platform"]
+        }
+      ],
+      "extracted_text": "Composite MLOps-leaning profile with TensorFlow, orchestration, cloud tooling, and scalable ML pipeline maintenance.",
+      "video_transcript": "I keep machine-learning systems running in production through Python pipelines, cloud tooling, orchestration, and validation."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000014",
+      "skills": ["Python", "SQL", "Airflow", "Spark", "BigQuery", "ETL"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 128000.0, "max_amount": 148000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-14",
+      "portfolio_projects": [
+        {
+          "title": "Streaming Data Warehouse",
+          "description": "Implemented warehouse ingestion, orchestration, and data-quality checks for analytics and downstream modeling teams.",
+          "technologies": ["Python", "SQL", "Airflow", "Spark"]
+        }
+      ],
+      "extracted_text": "Composite data-engineering profile with orchestration, large-table SQL work, and strong pipeline maintenance habits.",
+      "video_transcript": "I build data pipelines, optimize warehouse transformations, and support machine-learning teams with dependable inputs."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000015",
+      "skills": ["SQL", "dbt", "Python", "Looker", "Analytics Engineering"],
+      "years_of_experience": 4.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 120000.0, "max_amount": 138000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-15",
+      "portfolio_projects": [
+        {
+          "title": "Semantic Metrics Layer",
+          "description": "Modeled analytics datasets and stakeholder dashboards with dbt, warehouse SQL, and lightweight Python automation.",
+          "technologies": ["SQL", "dbt", "Python", "Looker"]
+        }
+      ],
+      "extracted_text": "Composite analytics-engineering profile with semantic modeling, SQL transformation, and stakeholder-facing reporting work.",
+      "video_transcript": "My background is in analytics engineering, data modeling, SQL quality, and enabling self-serve reporting workflows."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000016",
+      "skills": ["Excel", "WordPress", "Support", "Data Entry"],
+      "years_of_experience": 2.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 85000.0, "max_amount": 98000.0},
+      "portfolio_projects": [],
+      "extracted_text": "Composite non-engineering profile with support operations, content updates, spreadsheets, and general office software experience.",
+      "video_transcript": "I have handled support tasks, spreadsheet tracking, and website updates, but not production engineering responsibilities."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000017",
+      "skills": ["JavaScript", "HTML", "CSS", "Node.js"],
+      "years_of_experience": 1.5,
+      "salary_expectation": {"currency": "USD", "min_amount": 78000.0, "max_amount": 92000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-17",
+      "portfolio_projects": [
+        {
+          "title": "Small Business Website Refresh",
+          "description": "Built and updated lightweight marketing sites with basic JavaScript behavior and content-management integrations.",
+          "technologies": ["JavaScript", "HTML", "CSS", "Node.js"]
+        }
+      ],
+      "extracted_text": "Composite junior web profile with basic frontend delivery, limited backend exposure, and small-project maintenance experience.",
+      "video_transcript": "I have built smaller websites with JavaScript and CSS, but I have not owned large-scale product or ML systems."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000018",
+      "skills": ["Python", "Docker", "Kubernetes", "Terraform", "AWS", "SQL"],
+      "years_of_experience": 5.0,
+      "salary_expectation": {"currency": "USD", "min_amount": 142000.0, "max_amount": 162000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-18",
+      "portfolio_projects": [
+        {
+          "title": "Service Deployment Framework",
+          "description": "Standardized containerized release pipelines, cloud environments, and reliability dashboards for Python services.",
+          "technologies": ["Python", "Docker", "Kubernetes", "Terraform"]
+        }
+      ],
+      "extracted_text": "Composite backend-platform profile with deployment automation, Python service support, and practical cloud operations experience.",
+      "video_transcript": "I work where Python services meet infrastructure, focusing on containers, rollout safety, and production reliability."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000019",
+      "skills": ["Python", "FastAPI", "Redis", "Kafka", "PostgreSQL", "REST APIs"],
+      "years_of_experience": 4.5,
+      "salary_expectation": {"currency": "USD", "min_amount": 136000.0, "max_amount": 156000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-19",
+      "portfolio_projects": [
+        {
+          "title": "Event-Driven Integration API",
+          "description": "Built API services with async workflows, message streams, caching, and relational data for internal products.",
+          "technologies": ["Python", "FastAPI", "Kafka", "PostgreSQL"]
+        }
+      ],
+      "extracted_text": "Composite backend engineer profile with event-driven APIs, async processing, and strong production database experience.",
+      "video_transcript": "I build FastAPI services with queues, caching, and relational databases, and I care about scalable system behavior."
+    },
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000020",
+      "skills": ["Python", "PyTorch", "Transformers", "NLP", "Pandas", "Machine Learning"],
+      "years_of_experience": 3.5,
+      "salary_expectation": {"currency": "USD", "min_amount": 142000.0, "max_amount": 162000.0},
+      "portfolio_url": "https://portfolio.example.com/candidate-20",
+      "portfolio_projects": [
+        {
+          "title": "Language Model Evaluation Bench",
+          "description": "Built evaluation workflows for NLP systems using transformer models, Python tooling, and experiment comparisons.",
+          "technologies": ["Python", "PyTorch", "Transformers", "Pandas"]
+        }
+      ],
+      "extracted_text": "Composite ML profile focused on modern NLP systems, Python experiments, and evaluation pipelines rather than frontend or APIs.",
+      "video_transcript": "I evaluate and improve language-model systems with Python, PyTorch, and careful experiment design and analysis."
+    }
+  ],
+  "jobs": [
+    {
+      "label": "backend-api-observability",
+      "source_label": "Apollo Research - Backend Engineer (Product)",
+      "job": {
+        "job_id": "20000000-0000-4000-8000-000000000001",
+        "employer_id": "30000000-0000-4000-8000-000000000001",
+        "required_skills": ["Python", "FastAPI", "SQL", "REST APIs"],
+        "nice_to_have_skills": ["Docker", "Kubernetes", "Kafka", "AWS"],
+        "experience_range": {"min_years": 4.0, "max_years": 7.0},
+        "salary_offered": {"currency": "USD", "min_amount": 145000.0, "max_amount": 175000.0},
+        "job_description_text": "Build production backend systems at scale with Python, FastAPI, SQL, and well-documented APIs. Improve reliability, scalability, and observability for data-intensive services, and work with cloud, containers, and asynchronous workflows.",
+        "portfolio_required": false
+      }
+    },
+    {
+      "label": "frontend-react-typescript",
+      "source_label": "Relay - Lead Frontend Developer (React, TypeScript)",
+      "job": {
+        "job_id": "20000000-0000-4000-8000-000000000002",
+        "employer_id": "30000000-0000-4000-8000-000000000002",
+        "required_skills": ["React", "TypeScript", "JavaScript"],
+        "nice_to_have_skills": ["Redux", "Jest", "Figma", "Next.js"],
+        "experience_range": {"min_years": 4.0, "max_years": 7.0},
+        "salary_offered": {"currency": "USD", "min_amount": 135000.0, "max_amount": 165000.0},
+        "job_description_text": "Build and maintain critical user-interface components in React and TypeScript. Raise frontend craftsmanship, quality, testing, validation, and product collaboration while shipping polished interfaces in a fast-moving environment.",
+        "portfolio_required": true
+      }
+    },
+    {
+      "label": "ml-platform-engineer",
+      "source_label": "OSARO - Machine Learning Engineer",
+      "job": {
+        "job_id": "20000000-0000-4000-8000-000000000003",
+        "employer_id": "30000000-0000-4000-8000-000000000003",
+        "required_skills": ["Python", "TensorFlow", "Machine Learning"],
+        "nice_to_have_skills": ["Airflow", "Kubernetes", "Google Cloud Platform", "Data Pipelines"],
+        "experience_range": {"min_years": 4.0, "max_years": 6.0},
+        "salary_offered": {"currency": "USD", "min_amount": 150000.0, "max_amount": 180000.0},
+        "job_description_text": "Build machine-learning product features, data pipelines, and validation tooling in Python. Adapt state-of-the-art model architectures, automate data collection, and support production ML workflows across TensorFlow, cloud infrastructure, and orchestration tools.",
+        "portfolio_required": true
+      }
+    }
+  ]
+}
