@@ -203,3 +203,20 @@ def test_bulk_match_endpoint_returns_one_result_set_per_job(monkeypatch) -> None
     assert payload["candidate_pool_size"] == 1
     assert len(payload["matches"]) == 2
     assert payload["matches"][0]["shortlist_size"] == 1
+
+
+def test_match_endpoint_rejects_malformed_request_body() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/internal/match",
+        json={
+            "candidates": [],
+            "job": {"job_id": "not-enough-for-a-real-job-payload"},
+        },
+    )
+
+    assert response.status_code == 422
+    payload = response.json()
+    assert payload["detail"]
+    assert any(item["loc"][-1] == "candidates" for item in payload["detail"])
