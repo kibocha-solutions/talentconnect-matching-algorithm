@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
+from app.api_errors import ERROR_MAPPING, ApiErrorCode
 from app.main import app
 
 
@@ -216,7 +217,134 @@ def test_match_endpoint_rejects_malformed_request_body() -> None:
         },
     )
 
-    assert response.status_code == 422
+    assert response.status_code == 400
     payload = response.json()
-    assert payload["detail"]
-    assert any(item["loc"][-1] == "candidates" for item in payload["detail"])
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_REQUEST
+    assert payload["error"]["message"] == "Request body failed validation."
+    assert payload["error"]["request_id"]
+    assert any(
+        item["field"].endswith("candidates")
+        for item in payload["error"]["details"]["field_errors"]
+    )
+
+
+def test_error_response_uses_request_id_header() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/internal/match",
+        headers={"x-request-id": "request-123"},
+        json={"candidates": [], "job": {}},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["request_id"] == "request-123"
+
+
+def test_unexpected_error_response_is_sanitized(monkeypatch) -> None:
+    client = TestClient(app, raise_server_exceptions=False)
+
+    class FailingPipeline:
+        def run(self, candidates, job):
+            raise RuntimeError(
+                "secret-token stack trace /home/codelf/private/provider-payload"
+            )
+
+    monkeypatch.setattr("app.main.get_pipeline", lambda: FailingPipeline())
+
+    response = client.post(
+        "/api/internal/match",
+        json={
+            "candidates": [
+                {
+                    "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
+                    "skills": ["Python"],
+                    "years_of_experience": 4,
+                    "salary_expectation": {
+                        "currency": "USD",
+                        "min_amount": 70000,
+                        "max_amount": 90000,
+                    },
+                    "portfolio_projects": [],
+                    "extracted_text": "Prepared backend candidate profile with strong API experience.",
+                    "video_transcript": "I build backend APIs and platform services every week.",
+                }
+            ],
+            "job": {
+                "job_id": "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a",
+                "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
+                "required_skills": ["Python"],
+                "nice_to_have_skills": [],
+                "experience_range": {"min_years": 3, "max_years": 5},
+                "salary_offered": {
+                    "currency": "USD",
+                    "min_amount": 70000,
+                    "max_amount": 95000,
+                },
+                "job_description_text": "Prepared backend job with matching and API work.",
+                "portfolio_required": False,
+            },
+        },
+    )
+
+    payload_text = response.text
+    payload = response.json()
+
+    assert response.status_code == 500
+    assert payload["error"]["code"] == ApiErrorCode.INTERNAL_ERROR
+    assert payload["error"]["message"] == "Internal service error."
+    assert payload["error"]["details"] == {}
+    assert "secret-token" not in payload_text
+    assert "stack trace" not in payload_text
+    assert "/home/codelf" not in payload_text
+    assert "provider-payload" not in payload_text
+
+
+def test_api_error_mapping_defines_frontend_contract() -> None:
+    assert ERROR_MAPPING == {
+        "malformed_request_body": (
+            400,
+            "TC-400-INVALID_REQUEST",
+            "Request body failed validation.",
+        ),
+        "invalid_candidate_payload": (
+            400,
+            "TC-400-INVALID_CANDIDATE",
+            "Candidate payload failed validation.",
+        ),
+        "invalid_job_payload": (
+            400,
+            "TC-400-INVALID_JOB",
+            "Job payload failed validation.",
+        ),
+        "missing_internal_resource": (
+            404,
+            "TC-404-NOT_FOUND",
+            "Requested resource was not found.",
+        ),
+        "ranker_or_model_unavailable": (
+            409,
+            "TC-409-MODEL_NOT_READY",
+            "Matching model is not ready.",
+        ),
+        "embedding_rate_limit_without_fallback": (
+            429,
+            "TC-429-EMBEDDING_RATE_LIMIT",
+            "Embedding provider rate limit reached.",
+        ),
+        "embedding_unavailable_without_fallback": (
+            503,
+            "TC-503-EMBEDDING_UNAVAILABLE",
+            "Embedding provider is unavailable.",
+        ),
+        "model_load_failure": (
+            503,
+            "TC-503-MODEL_LOAD_FAILED",
+            "Matching model could not be loaded.",
+        ),
+        "unexpected_runtime_failure": (
+            500,
+            "TC-500-INTERNAL_ERROR",
+            "Internal service error.",
+        ),
+    }

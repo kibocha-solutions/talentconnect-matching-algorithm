@@ -40,6 +40,6 @@ models/
 data/processed/
 
 # Temporarily uncomment before first commit to exclude agent-local files
-# AGENTS.md
-# copilot-instructions.md
-# .github/copilot-instructions.md
+AGENTS.md
+copilot-instructions.md
+.github/copilot-instructions.md

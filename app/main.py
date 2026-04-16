@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import FastAPI
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.api_errors import ApiErrorResponse, register_exception_handlers
 from app.pipeline import MatchingPipelineResult, build_matching_pipeline
 
 
@@ -46,6 +47,7 @@ app = FastAPI(
         "Authentication and transport hardening are deferred for this sprint."
     ),
 )
+register_exception_handlers(app)
 
 
 def get_pipeline():
@@ -74,14 +76,22 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/api/internal/match", response_model=MatchResponse)
+@app.post(
+    "/api/internal/match",
+    response_model=MatchResponse,
+    responses={400: {"model": ApiErrorResponse}, 500: {"model": ApiErrorResponse}},
+)
 def match(request: MatchRequest) -> MatchResponse:
     pipeline = get_pipeline()
     result = pipeline.run(request.candidates, request.job)
     return serialize_pipeline_result(result)
 
 
-@app.post("/api/internal/match/bulk", response_model=BulkMatchResponse)
+@app.post(
+    "/api/internal/match/bulk",
+    response_model=BulkMatchResponse,
+    responses={400: {"model": ApiErrorResponse}, 500: {"model": ApiErrorResponse}},
+)
 def bulk_match(request: BulkMatchRequest) -> BulkMatchResponse:
     pipeline = get_pipeline()
     serialized_matches: list[dict[str, Any]] = []
