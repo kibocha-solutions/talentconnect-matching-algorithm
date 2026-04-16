@@ -26,6 +26,7 @@ class RetrievalResult:
     provider_name: str
     model_name: str
     shortlist_size_limit: int
+    embedding_provider: EmbeddingProvider
 
 
 class InMemorySemanticRetriever:
@@ -64,6 +65,7 @@ class InMemorySemanticRetriever:
                 provider_name=self.provider_name,
                 model_name=self.model_name,
                 shortlist_size_limit=self.shortlist_size,
+                embedding_provider=self._embedding_provider,
             )
 
         job_text = assemble_job_text(job)
@@ -101,6 +103,7 @@ class InMemorySemanticRetriever:
             provider_name=self.provider_name,
             model_name=self.model_name,
             shortlist_size_limit=self.shortlist_size,
+            embedding_provider=self._embedding_provider,
         )
 
 

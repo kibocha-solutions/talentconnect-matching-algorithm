@@ -1,12 +1,25 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
 
-from app.api_errors import ApiErrorResponse, register_exception_handlers
+from app.api_errors import (
+    ApiErrorCode,
+    ApiErrorResponse,
+    ApiException,
+    normalize_validation_errors,
+    register_exception_handlers,
+)
+from app.embeddings.factory import resolve_provider_metadata
 from app.pipeline import MatchingPipelineResult, build_matching_pipeline
+from app.schemas import CandidateInput, JobInput
+
+
+_CANDIDATE_LIST_ADAPTER = TypeAdapter(list[CandidateInput])
+_JOB_ADAPTER = TypeAdapter(JobInput)
 
 
 class MatchRequest(BaseModel):
@@ -30,6 +43,7 @@ class MatchResponse(BaseModel):
     shortlist_size: int
     retrieval_provider: str
     retrieval_model: str
+    retrieval_fallback_used: bool = False
 
 
 class BulkMatchResponse(BaseModel):
@@ -51,15 +65,32 @@ register_exception_handlers(app)
 
 
 def get_pipeline():
-    return build_matching_pipeline()
+    try:
+        return build_matching_pipeline()
+    except FileNotFoundError as exc:
+        raise ApiException(
+            status_code=503,
+            code=ApiErrorCode.MODEL_LOAD_FAILED,
+            message="Matching model could not be loaded.",
+        ) from exc
+    except (OSError, ValueError) as exc:
+        if is_model_failure(exc):
+            raise ApiException(
+                status_code=409,
+                code=ApiErrorCode.MODEL_NOT_READY,
+                message="Matching model is not ready.",
+            ) from exc
+        raise
 
 
 def serialize_pipeline_result(result: MatchingPipelineResult) -> MatchResponse:
+    provider_metadata = get_provider_metadata(result.retrieval_result)
     return MatchResponse(
         results=[match_result.model_dump(mode="json") for match_result in result.match_results],
         shortlist_size=len(result.retrieval_result.shortlisted_candidates),
-        retrieval_provider=result.retrieval_result.provider_name,
-        retrieval_model=result.retrieval_result.model_name,
+        retrieval_provider=provider_metadata.active_provider,
+        retrieval_model=provider_metadata.model_name,
+        retrieval_fallback_used=provider_metadata.fallback_triggered,
     )
 
 
@@ -82,8 +113,13 @@ def health() -> dict[str, str]:
     responses={400: {"model": ApiErrorResponse}, 500: {"model": ApiErrorResponse}},
 )
 def match(request: MatchRequest) -> MatchResponse:
+    candidates = validate_candidates(request.candidates)
+    job = validate_job(request.job)
     pipeline = get_pipeline()
-    result = pipeline.run(request.candidates, request.job)
+    try:
+        result = pipeline.run(candidates, job)
+    except Exception as exc:
+        raise map_runtime_error(exc) from exc
     return serialize_pipeline_result(result)
 
 
@@ -93,22 +129,140 @@ def match(request: MatchRequest) -> MatchResponse:
     responses={400: {"model": ApiErrorResponse}, 500: {"model": ApiErrorResponse}},
 )
 def bulk_match(request: BulkMatchRequest) -> BulkMatchResponse:
+    candidates = validate_candidates(request.candidates)
+    jobs = validate_jobs(request.jobs)
     pipeline = get_pipeline()
     serialized_matches: list[dict[str, Any]] = []
 
-    for job in request.jobs:
-        result = pipeline.run(request.candidates, job)
+    for job in jobs:
+        try:
+            result = pipeline.run(candidates, job)
+        except Exception as exc:
+            raise map_runtime_error(exc) from exc
+        provider_metadata = get_provider_metadata(result.retrieval_result)
         serialized_matches.append(
             {
                 "job_id": str(result.job.job_id),
                 "results": [match_result.model_dump(mode="json") for match_result in result.match_results],
                 "shortlist_size": len(result.retrieval_result.shortlisted_candidates),
-                "retrieval_provider": result.retrieval_result.provider_name,
-                "retrieval_model": result.retrieval_result.model_name,
+                "retrieval_provider": provider_metadata.active_provider,
+                "retrieval_model": provider_metadata.model_name,
+                "retrieval_fallback_used": provider_metadata.fallback_triggered,
             }
         )
 
     return BulkMatchResponse(
         matches=serialized_matches,
-        candidate_pool_size=len(request.candidates),
+        candidate_pool_size=len(candidates),
+    )
+
+
+def validate_candidates(candidates: list[dict[str, Any]]) -> list[CandidateInput]:
+    try:
+        return _CANDIDATE_LIST_ADAPTER.validate_python(candidates)
+    except ValidationError as exc:
+        raise ApiException(
+            status_code=400,
+            code=ApiErrorCode.INVALID_CANDIDATE,
+            message="Candidate payload failed validation.",
+            details={"field_errors": normalize_validation_errors(exc.errors())},
+        ) from exc
+
+
+def validate_job(job: dict[str, Any]) -> JobInput:
+    try:
+        return _JOB_ADAPTER.validate_python(job)
+    except ValidationError as exc:
+        raise ApiException(
+            status_code=400,
+            code=ApiErrorCode.INVALID_JOB,
+            message="Job payload failed validation.",
+            details={"field_errors": normalize_validation_errors(exc.errors())},
+        ) from exc
+
+
+def validate_jobs(jobs: list[dict[str, Any]]) -> list[JobInput]:
+    validated_jobs: list[JobInput] = []
+    for index, job in enumerate(jobs):
+        try:
+            validated_jobs.append(_JOB_ADAPTER.validate_python(job))
+        except ValidationError as exc:
+            field_errors = normalize_validation_errors(exc.errors())
+            for field_error in field_errors:
+                field_error["field"] = f"jobs.{index}.{field_error['field']}"
+            raise ApiException(
+                status_code=400,
+                code=ApiErrorCode.INVALID_JOB,
+                message="Job payload failed validation.",
+                details={"field_errors": field_errors},
+            ) from exc
+    return validated_jobs
+
+
+def get_provider_metadata(retrieval_result: Any):
+    provider = getattr(retrieval_result, "embedding_provider", retrieval_result)
+    return resolve_provider_metadata(provider)
+
+
+def map_runtime_error(exc: Exception) -> ApiException:
+    if is_rate_limit_failure(exc):
+        return ApiException(
+            status_code=429,
+            code=ApiErrorCode.EMBEDDING_RATE_LIMIT,
+            message="Embedding provider rate limit reached.",
+        )
+    if is_embedding_failure(exc):
+        return ApiException(
+            status_code=503,
+            code=ApiErrorCode.EMBEDDING_UNAVAILABLE,
+            message="Embedding provider is unavailable.",
+        )
+    if is_model_failure(exc):
+        return ApiException(
+            status_code=409,
+            code=ApiErrorCode.MODEL_NOT_READY,
+            message="Matching model is not ready.",
+        )
+    return ApiException(
+        status_code=500,
+        code=ApiErrorCode.INTERNAL_ERROR,
+        message="Internal service error.",
+    )
+
+
+def is_rate_limit_failure(exc: Exception) -> bool:
+    message = str(exc).lower()
+    return "429" in message or "rate limit" in message or "resource exhausted" in message
+
+
+def is_embedding_failure(exc: Exception) -> bool:
+    message = str(exc).lower()
+    return any(
+        hint in message
+        for hint in (
+            "embedding",
+            "connection",
+            "deadline",
+            "dns",
+            "network",
+            "service unavailable",
+            "timed out",
+            "timeout",
+            "transport",
+            "unavailable",
+        )
+    )
+
+
+def is_model_failure(exc: Exception) -> bool:
+    message = str(exc).lower()
+    return isinstance(exc, FileNotFoundError) or any(
+        hint in message
+        for hint in (
+            "booster",
+            "feature contract",
+            "model",
+            "metadata",
+            str(Path("xgboost-ranker.json")),
+        )
     )

@@ -6,14 +6,50 @@ from app.api_errors import ERROR_MAPPING, ApiErrorCode
 from app.main import app
 
 
+def valid_candidate_payload() -> dict:
+    return {
+        "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
+        "skills": ["Python"],
+        "years_of_experience": 4,
+        "salary_expectation": {
+            "currency": "USD",
+            "min_amount": 70000,
+            "max_amount": 90000,
+        },
+        "portfolio_projects": [],
+        "extracted_text": "Prepared backend candidate profile with strong API experience.",
+        "video_transcript": "I build backend APIs and platform services every week.",
+    }
+
+
+def valid_job_payload(job_id: str = "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a") -> dict:
+    return {
+        "job_id": job_id,
+        "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
+        "required_skills": ["Python"],
+        "nice_to_have_skills": [],
+        "experience_range": {"min_years": 3, "max_years": 5},
+        "salary_offered": {
+            "currency": "USD",
+            "min_amount": 70000,
+            "max_amount": 95000,
+        },
+        "job_description_text": "Prepared backend job with matching and API work.",
+        "portfolio_required": False,
+    }
+
+
 def test_root_and_docs_endpoints_load() -> None:
     client = TestClient(app)
 
     root_response = client.get("/")
+    health_response = client.get("/health")
     docs_response = client.get("/docs")
 
     assert root_response.status_code == 200
     assert root_response.json()["status"] == "ok"
+    assert health_response.status_code == 200
+    assert health_response.json()["status"] == "ok"
     assert docs_response.status_code == 200
 
 
@@ -23,7 +59,7 @@ def test_match_endpoint_accepts_prepared_payload(monkeypatch) -> None:
     class StubPipeline:
         def run(self, candidates, job):
             assert len(candidates) == 1
-            assert "job_id" in job
+            assert str(job.job_id) == "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a"
             return type(
                 "PipelineResult",
                 (),
@@ -65,35 +101,8 @@ def test_match_endpoint_accepts_prepared_payload(monkeypatch) -> None:
     response = client.post(
         "/api/internal/match",
         json={
-            "candidates": [
-                {
-                    "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
-                    "skills": ["Python"],
-                    "years_of_experience": 4,
-                    "salary_expectation": {
-                        "currency": "USD",
-                        "min_amount": 70000,
-                        "max_amount": 90000,
-                    },
-                    "portfolio_projects": [],
-                    "extracted_text": "Prepared backend candidate profile with strong API experience.",
-                    "video_transcript": "I build backend APIs and platform services every week."
-                }
-            ],
-            "job": {
-                "job_id": "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a",
-                "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
-                "required_skills": ["Python"],
-                "nice_to_have_skills": [],
-                "experience_range": {"min_years": 3, "max_years": 5},
-                "salary_offered": {
-                    "currency": "USD",
-                    "min_amount": 70000,
-                    "max_amount": 95000
-                },
-                "job_description_text": "Prepared backend job with matching and API work.",
-                "portfolio_required": False
-            }
+            "candidates": [valid_candidate_payload()],
+            "job": valid_job_payload(),
         },
     )
 
@@ -101,6 +110,7 @@ def test_match_endpoint_accepts_prepared_payload(monkeypatch) -> None:
     payload = response.json()
     assert payload["shortlist_size"] == 1
     assert payload["retrieval_provider"] == "stub"
+    assert payload["retrieval_fallback_used"] is False
     assert payload["results"][0]["overall_score"] == 95.0
 
 
@@ -113,15 +123,15 @@ def test_bulk_match_endpoint_returns_one_result_set_per_job(monkeypatch) -> None
                 "PipelineResult",
                 (),
                 {
-                    "job": type("Job", (), {"job_id": job["job_id"]})(),
+                    "job": type("Job", (), {"job_id": job.job_id})(),
                     "match_results": [
                         type(
                             "MatchResult",
                             (),
                             {
                                 "model_dump": lambda self, mode="json": {
-                                    "candidate_id": candidates[0]["candidate_id"],
-                                    "job_id": job["job_id"],
+                                    "candidate_id": str(candidates[0].candidate_id),
+                                    "job_id": str(job.job_id),
                                     "overall_score": 88.0,
                                     "score_breakdown": {
                                         "skills_score": 80.0,
@@ -151,50 +161,10 @@ def test_bulk_match_endpoint_returns_one_result_set_per_job(monkeypatch) -> None
     response = client.post(
         "/api/internal/match/bulk",
         json={
-            "candidates": [
-                {
-                    "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
-                    "skills": ["Python"],
-                    "years_of_experience": 4,
-                    "salary_expectation": {
-                        "currency": "USD",
-                        "min_amount": 70000,
-                        "max_amount": 90000
-                    },
-                    "portfolio_projects": [],
-                    "extracted_text": "Prepared backend candidate profile with strong API experience.",
-                    "video_transcript": "I build backend APIs and platform services every week."
-                }
-            ],
+            "candidates": [valid_candidate_payload()],
             "jobs": [
-                {
-                    "job_id": "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a",
-                    "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
-                    "required_skills": ["Python"],
-                    "nice_to_have_skills": [],
-                    "experience_range": {"min_years": 3, "max_years": 5},
-                    "salary_offered": {
-                        "currency": "USD",
-                        "min_amount": 70000,
-                        "max_amount": 95000
-                    },
-                    "job_description_text": "Prepared backend job with matching and API work.",
-                    "portfolio_required": False
-                },
-                {
-                    "job_id": "80242f76-3623-4e87-8a55-a36cb42f97d3",
-                    "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
-                    "required_skills": ["Python"],
-                    "nice_to_have_skills": [],
-                    "experience_range": {"min_years": 2, "max_years": 4},
-                    "salary_offered": {
-                        "currency": "USD",
-                        "min_amount": 65000,
-                        "max_amount": 90000
-                    },
-                    "job_description_text": "Prepared second backend job for bulk matching.",
-                    "portfolio_required": False
-                }
+                valid_job_payload(),
+                valid_job_payload("80242f76-3623-4e87-8a55-a36cb42f97d3"),
             ]
         },
     )
@@ -256,34 +226,9 @@ def test_unexpected_error_response_is_sanitized(monkeypatch) -> None:
         "/api/internal/match",
         json={
             "candidates": [
-                {
-                    "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
-                    "skills": ["Python"],
-                    "years_of_experience": 4,
-                    "salary_expectation": {
-                        "currency": "USD",
-                        "min_amount": 70000,
-                        "max_amount": 90000,
-                    },
-                    "portfolio_projects": [],
-                    "extracted_text": "Prepared backend candidate profile with strong API experience.",
-                    "video_transcript": "I build backend APIs and platform services every week.",
-                }
+                valid_candidate_payload()
             ],
-            "job": {
-                "job_id": "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a",
-                "employer_id": "da1234f7-82f8-4458-947f-7ff920d61160",
-                "required_skills": ["Python"],
-                "nice_to_have_skills": [],
-                "experience_range": {"min_years": 3, "max_years": 5},
-                "salary_offered": {
-                    "currency": "USD",
-                    "min_amount": 70000,
-                    "max_amount": 95000,
-                },
-                "job_description_text": "Prepared backend job with matching and API work.",
-                "portfolio_required": False,
-            },
+            "job": valid_job_payload(),
         },
     )
 
@@ -298,6 +243,130 @@ def test_unexpected_error_response_is_sanitized(monkeypatch) -> None:
     assert "stack trace" not in payload_text
     assert "/home/codelf" not in payload_text
     assert "provider-payload" not in payload_text
+
+
+def test_match_endpoint_rejects_invalid_candidate_payload() -> None:
+    client = TestClient(app)
+    candidate = valid_candidate_payload()
+    candidate["extracted_text"] = "too short"
+
+    response = client.post(
+        "/api/internal/match",
+        json={"candidates": [candidate], "job": valid_job_payload()},
+    )
+
+    payload = response.json()
+    assert response.status_code == 400
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_CANDIDATE
+    assert payload["error"]["message"] == "Candidate payload failed validation."
+    assert any(
+        "extracted_text" in item["field"]
+        for item in payload["error"]["details"]["field_errors"]
+    )
+
+
+def test_match_endpoint_rejects_invalid_job_payload() -> None:
+    client = TestClient(app)
+    job = valid_job_payload()
+    job["required_skills"] = []
+
+    response = client.post(
+        "/api/internal/match",
+        json={"candidates": [valid_candidate_payload()], "job": job},
+    )
+
+    payload = response.json()
+    assert response.status_code == 400
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_JOB
+    assert payload["error"]["message"] == "Job payload failed validation."
+    assert any(
+        "required_skills" in item["field"]
+        for item in payload["error"]["details"]["field_errors"]
+    )
+
+
+def test_bulk_match_endpoint_identifies_invalid_job_index() -> None:
+    client = TestClient(app)
+    invalid_job = valid_job_payload("80242f76-3623-4e87-8a55-a36cb42f97d3")
+    invalid_job["job_description_text"] = "too short"
+
+    response = client.post(
+        "/api/internal/match/bulk",
+        json={
+            "candidates": [valid_candidate_payload()],
+            "jobs": [valid_job_payload(), invalid_job],
+        },
+    )
+
+    payload = response.json()
+    assert response.status_code == 400
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_JOB
+    assert any(
+        item["field"].startswith("jobs.1")
+        for item in payload["error"]["details"]["field_errors"]
+    )
+
+
+def test_match_endpoint_maps_model_load_failure(monkeypatch) -> None:
+    client = TestClient(app, raise_server_exceptions=False)
+
+    def fail_to_build_pipeline():
+        raise FileNotFoundError("Model artifact not found: /private/model/path")
+
+    monkeypatch.setattr("app.main.build_matching_pipeline", fail_to_build_pipeline)
+
+    response = client.post(
+        "/api/internal/match",
+        json={"candidates": [valid_candidate_payload()], "job": valid_job_payload()},
+    )
+
+    payload = response.json()
+    assert response.status_code == 503
+    assert payload["error"]["code"] == ApiErrorCode.MODEL_LOAD_FAILED
+    assert payload["error"]["message"] == "Matching model could not be loaded."
+    assert "/private/model/path" not in response.text
+
+
+def test_match_endpoint_maps_embedding_unavailable(monkeypatch) -> None:
+    client = TestClient(app, raise_server_exceptions=False)
+
+    class FailingPipeline:
+        def run(self, candidates, job):
+            raise RuntimeError("embedding provider transport unavailable")
+
+    monkeypatch.setattr("app.main.get_pipeline", lambda: FailingPipeline())
+
+    response = client.post(
+        "/api/internal/match",
+        json={"candidates": [valid_candidate_payload()], "job": valid_job_payload()},
+    )
+
+    payload = response.json()
+    assert response.status_code == 503
+    assert payload["error"]["code"] == ApiErrorCode.EMBEDDING_UNAVAILABLE
+    assert payload["error"]["message"] == "Embedding provider is unavailable."
+    assert "transport unavailable" not in response.text
+
+
+def test_match_endpoint_maps_embedding_rate_limit(monkeypatch) -> None:
+    client = TestClient(app, raise_server_exceptions=False)
+
+    class FailingPipeline:
+        def run(self, candidates, job):
+            raise RuntimeError("429 rate limit exceeded")
+
+    monkeypatch.setattr("app.main.get_pipeline", lambda: FailingPipeline())
+
+    response = client.post(
+        "/api/internal/match",
+        json={"candidates": [valid_candidate_payload()], "job": valid_job_payload()},
+    )
+
+    payload = response.json()
+    assert response.status_code == 429
+    assert payload["error"]["code"] == ApiErrorCode.EMBEDDING_RATE_LIMIT
+    assert payload["error"]["message"] == "Embedding provider rate limit reached."
+    assert "rate limit exceeded" not in response.text
 
 
 def test_api_error_mapping_defines_frontend_contract() -> None:
