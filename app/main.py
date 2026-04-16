@@ -13,6 +13,7 @@ from app.api_errors import (
     normalize_validation_errors,
     register_exception_handlers,
 )
+from app.config import get_settings
 from app.embeddings.factory import resolve_provider_metadata
 from app.pipeline import MatchingPipelineResult, build_matching_pipeline
 from app.schemas import CandidateInput, JobInput
@@ -51,6 +52,25 @@ class BulkMatchResponse(BaseModel):
 
     matches: list[dict[str, Any]]
     candidate_pool_size: int
+
+
+class ConfigResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    service: str
+    api_version: str
+    environment: str
+    embedding_provider: str
+    shortlist_size: int
+    endpoints: list[str]
+
+
+class ModelStatusResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: str
+    model_loaded: bool
+    embedding_provider_configured: bool
 
 
 app = FastAPI(
@@ -105,6 +125,58 @@ def root() -> dict[str, str]:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get(
+    "/api/internal/config",
+    response_model=ConfigResponse,
+    responses={500: {"model": ApiErrorResponse}},
+)
+def api_config() -> ConfigResponse:
+    settings = get_settings()
+    return ConfigResponse(
+        service="talentconnect-matching-algorithm",
+        api_version=app.version,
+        environment=settings.environment,
+        embedding_provider=settings.embedding_provider,
+        shortlist_size=settings.shortlist_size,
+        endpoints=[
+            "GET /",
+            "GET /health",
+            "GET /api/internal/config",
+            "GET /api/internal/model/status",
+            "POST /api/internal/match",
+            "POST /api/internal/match/bulk",
+        ],
+    )
+
+
+@app.get(
+    "/api/internal/model/status",
+    response_model=ModelStatusResponse,
+    responses={409: {"model": ApiErrorResponse}, 503: {"model": ApiErrorResponse}},
+)
+def model_status() -> ModelStatusResponse:
+    try:
+        get_pipeline()
+    except ApiException as exc:
+        if exc.code == ApiErrorCode.MODEL_LOAD_FAILED:
+            return ModelStatusResponse(
+                status="unavailable",
+                model_loaded=False,
+                embedding_provider_configured=is_embedding_provider_configured(),
+            )
+        return ModelStatusResponse(
+            status="not_ready",
+            model_loaded=False,
+            embedding_provider_configured=is_embedding_provider_configured(),
+        )
+
+    return ModelStatusResponse(
+        status="ready",
+        model_loaded=True,
+        embedding_provider_configured=is_embedding_provider_configured(),
+    )
 
 
 @app.post(
@@ -266,3 +338,8 @@ def is_model_failure(exc: Exception) -> bool:
             str(Path("xgboost-ranker.json")),
         )
     )
+
+
+def is_embedding_provider_configured() -> bool:
+    settings = get_settings()
+    return settings.embedding_provider == "local" or bool(settings.gemini_api_key)

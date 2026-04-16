@@ -53,6 +53,69 @@ def test_root_and_docs_endpoints_load() -> None:
     assert docs_response.status_code == 200
 
 
+def test_config_endpoint_returns_safe_capability_metadata() -> None:
+    client = TestClient(app)
+
+    response = client.get("/api/internal/config")
+
+    payload_text = response.text
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["service"] == "talentconnect-matching-algorithm"
+    assert payload["api_version"] == "0.1.0"
+    assert payload["embedding_provider"] in {"gemini", "local"}
+    assert payload["shortlist_size"] >= 1
+    assert "POST /api/internal/match" in payload["endpoints"]
+    assert "GET /api/internal/model/status" in payload["endpoints"]
+    assert "GEMINI_API_KEY" not in payload_text
+    assert "secret" not in payload_text.lower()
+    assert "/home/" not in payload_text
+
+
+def test_model_status_endpoint_reports_ready(monkeypatch) -> None:
+    client = TestClient(app)
+    monkeypatch.setattr("app.main.get_pipeline", lambda: object())
+    monkeypatch.setattr("app.main.is_embedding_provider_configured", lambda: True)
+
+    response = client.get("/api/internal/model/status")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ready",
+        "model_loaded": True,
+        "embedding_provider_configured": True,
+    }
+
+
+def test_model_status_endpoint_reports_model_unavailable(monkeypatch) -> None:
+    client = TestClient(app)
+
+    def fail_to_build_pipeline():
+        raise FileNotFoundError("Model artifact not found: /private/model/path")
+
+    monkeypatch.setattr("app.main.build_matching_pipeline", fail_to_build_pipeline)
+
+    response = client.get("/api/internal/model/status")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["status"] == "unavailable"
+    assert payload["model_loaded"] is False
+    assert "private" not in response.text
+    assert "/private/model/path" not in response.text
+
+
+def test_match_preview_endpoint_is_not_supported() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/internal/match/preview",
+        json={"candidates": [valid_candidate_payload()], "job": valid_job_payload()},
+    )
+
+    assert response.status_code == 404
+
+
 def test_match_endpoint_accepts_prepared_payload(monkeypatch) -> None:
     client = TestClient(app)
 
