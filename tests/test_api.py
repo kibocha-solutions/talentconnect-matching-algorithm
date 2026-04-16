@@ -114,6 +114,85 @@ def test_match_preview_endpoint_is_not_supported() -> None:
     )
 
     assert response.status_code == 404
+    payload = response.json()
+    assert payload["error"]["code"] == ApiErrorCode.NOT_FOUND
+    assert payload["error"]["message"] == "Requested resource was not found."
+
+
+def test_unknown_route_uses_structured_not_found_error() -> None:
+    client = TestClient(app)
+
+    response = client.get("/api/internal/does-not-exist")
+
+    payload = response.json()
+    assert response.status_code == 404
+    assert payload["error"]["code"] == ApiErrorCode.NOT_FOUND
+    assert payload["error"]["details"] == {}
+    assert payload["error"]["request_id"]
+
+
+def test_wrong_method_uses_structured_error() -> None:
+    client = TestClient(app)
+
+    response = client.get("/api/internal/match")
+
+    payload = response.json()
+    assert response.status_code == 405
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_REQUEST
+    assert payload["error"]["message"] == "Request could not be processed."
+
+
+def test_match_endpoint_rejects_extra_top_level_fields() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/internal/match",
+        json={
+            "candidates": [valid_candidate_payload()],
+            "job": valid_job_payload(),
+            "debug": True,
+        },
+    )
+
+    payload = response.json()
+    assert response.status_code == 400
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_REQUEST
+    assert any(
+        item["field"].endswith("debug")
+        for item in payload["error"]["details"]["field_errors"]
+    )
+
+
+def test_match_endpoint_rejects_malformed_json() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/internal/match",
+        content='{"candidates": [',
+        headers={"content-type": "application/json"},
+    )
+
+    payload = response.json()
+    assert response.status_code == 400
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_REQUEST
+    assert payload["error"]["request_id"]
+
+
+def test_bulk_match_endpoint_rejects_empty_jobs() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/internal/match/bulk",
+        json={"candidates": [valid_candidate_payload()], "jobs": []},
+    )
+
+    payload = response.json()
+    assert response.status_code == 400
+    assert payload["error"]["code"] == ApiErrorCode.INVALID_REQUEST
+    assert any(
+        item["field"].endswith("jobs")
+        for item in payload["error"]["details"]["field_errors"]
+    )
 
 
 def test_match_endpoint_accepts_prepared_payload(monkeypatch) -> None:

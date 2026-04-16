@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 class ApiErrorCode:
@@ -95,6 +96,27 @@ class ApiException(Exception):
 
 
 def register_exception_handlers(app: FastAPI) -> None:
+    @app.exception_handler(StarletteHTTPException)
+    async def handle_http_exception(
+        request: Request,
+        exc: StarletteHTTPException,
+    ) -> JSONResponse:
+        if exc.status_code == 404:
+            return build_error_response(
+                request=request,
+                status_code=404,
+                code=ApiErrorCode.NOT_FOUND,
+                message="Requested resource was not found.",
+                details={},
+            )
+        return build_error_response(
+            request=request,
+            status_code=exc.status_code,
+            code=ApiErrorCode.INVALID_REQUEST,
+            message="Request could not be processed.",
+            details={},
+        )
+
     @app.exception_handler(RequestValidationError)
     async def handle_request_validation_error(
         request: Request,
