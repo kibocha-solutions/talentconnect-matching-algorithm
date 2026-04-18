@@ -1,0 +1,197 @@
+- candidate_id: 32000000-0000-4000-8000-000000000001
+  skills:
+    - Python
+    - ETL
+    - PostgreSQL
+    - Airflow
+  years_of_experience: 4
+  salary_expectation:
+    currency: USD
+    min_amount: 84000
+    max_amount: 112000
+  portfolio_projects: []
+  extracted_text: Backend data engineer with Python ETL, PostgreSQL models,
+    Airflow schedules, validation checks, and reporting data flows.
+  video_transcript: I build dependable data preparation jobs that help matching
+    teams work from clean structured inputs.
+  visible: true
+  archived: false
+  candidate_label: Amara N. - Data Pipeline Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000002
+  skills:
+    - Kotlin
+    - Spring
+    - Kafka
+    - AWS
+  years_of_experience: 5
+  salary_expectation:
+    currency: USD
+    min_amount: 110000
+    max_amount: 142000
+  portfolio_projects: []
+  extracted_text: Kotlin backend engineer with Spring services, Kafka event
+    messaging, AWS deployments, and recruiter workflow APIs.
+  video_transcript: I have built microservices that connect product workflows with
+    reliable backend event processing.
+  visible: true
+  archived: false
+  candidate_label: Kobe M. - Kotlin Services Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000003
+  skills:
+    - Python
+    - Django
+    - PostgreSQL
+    - Redis
+  years_of_experience: 2.5
+  salary_expectation:
+    currency: USD
+    min_amount: 76000
+    max_amount: 98000
+  portfolio_projects: []
+  extracted_text: Backend engineer with Django applications, PostgreSQL schemas,
+    Redis caching, admin workflows, and API maintenance.
+  video_transcript: I support product teams by shipping clear backend changes and
+    improving existing Django systems.
+  visible: true
+  archived: false
+  candidate_label: Nia O. - Django Backend Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000004
+  skills:
+    - Go
+    - PostgreSQL
+    - Terraform
+    - Kubernetes
+  years_of_experience: 7
+  salary_expectation:
+    currency: USD
+    min_amount: 118000
+    max_amount: 152000
+  portfolio_projects: []
+  extracted_text: Go backend platform engineer with Kubernetes operations,
+    PostgreSQL integrations, Terraform modules, and service reliability work.
+  video_transcript: I enjoy building backend infrastructure that makes application
+    teams faster and safer.
+  visible: true
+  archived: false
+  candidate_label: Brian T. - Go Platform Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000005
+  skills:
+    - Node.js
+    - TypeScript
+    - REST APIs
+    - AWS Lambda
+  years_of_experience: 4
+  salary_expectation:
+    currency: USD
+    min_amount: 96000
+    max_amount: 126000
+  portfolio_projects:
+    - title: Candidate Intake Functions
+      description: Built serverless TypeScript APIs for candidate intake, validation,
+        and event publication.
+      technologies:
+        - TypeScript
+        - AWS Lambda
+  extracted_text: TypeScript backend engineer with REST APIs, serverless
+    functions, validation, and event-driven candidate intake services.
+  video_transcript: I like building small, observable services with clear
+    contracts and good validation.
+  visible: true
+  archived: false
+  candidate_label: Lena C. - TypeScript API Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000006
+  skills:
+    - Python
+    - Vector Search
+    - FastAPI
+    - Machine Learning
+  years_of_experience: 5
+  salary_expectation:
+    currency: USD
+    min_amount: 116000
+    max_amount: 150000
+  portfolio_projects:
+    - title: Semantic Retrieval Service
+      description: Created a semantic retrieval backend for ranking candidate records
+        with explainable metadata.
+      technologies:
+        - Python
+        - FastAPI
+        - Vector Search
+  extracted_text: Machine learning backend engineer with semantic retrieval,
+    FastAPI model endpoints, ranking metadata, and production fallbacks.
+  video_transcript: I turn retrieval and scoring concepts into APIs that product
+    reviewers can understand.
+  visible: true
+  archived: false
+  candidate_label: Ayo F. - Retrieval ML Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000007
+  skills:
+    - C#
+    - .NET
+    - Azure
+    - SQL Server
+  years_of_experience: 6
+  salary_expectation:
+    currency: USD
+    min_amount: 99000
+    max_amount: 132000
+  portfolio_projects: []
+  extracted_text: Senior .NET backend engineer with Azure services, SQL Server
+    query optimization, secure APIs, and enterprise integrations.
+  video_transcript: I work on long-lived backend systems where correctness,
+    testing, and customer trust matter.
+  visible: true
+  archived: false
+  candidate_label: Clara H. - .NET Enterprise Backend
+- candidate_id: 32000000-0000-4000-8000-000000000008
+  skills:
+    - Ruby
+    - Rails
+    - Redis
+    - PostgreSQL
+  years_of_experience: 5
+  salary_expectation:
+    currency: USD
+    min_amount: 99000
+    max_amount: 129000
+  portfolio_projects: []
+  extracted_text: Rails backend engineer with Redis-backed jobs, PostgreSQL
+    reporting, recruiter tooling, and production maintenance experience.
+  video_transcript: I have improved operational workflows and background
+    processing in Rails applications.
+  visible: true
+  archived: false
+  candidate_label: Ruby S. - Rails Workflow Engineer
+- candidate_id: 32000000-0000-4000-8000-000000000009
+  skills: []
+  years_of_experience: 2
+  salary_expectation:
+    currency: USD
+    min_amount: 70000
+    max_amount: 90000
+  portfolio_projects: []
+  extracted_text: Invalid YAML fixture with no skills so import preview can
+    explain why the record cannot be saved.
+  video_transcript: This intentionally invalid record should fail validation
+    during the preview step.
+  visible: true
+  archived: false
+  candidate_label: Invalid Fixture - Missing Skills
+- candidate_id: 32000000-0000-4000-8000-000000000010
+  skills:
+    - Excel
+    - WordPress
+  years_of_experience: 1
+  salary_expectation:
+    currency: USD
+    min_amount: 62000
+    max_amount: 90000
+  portfolio_projects: []
+  extracted_text: Candidate has general website support experience and limited
+    backend exposure, useful as a lower scoring comparison record.
+  video_transcript: I have worked on support tasks and basic website updates, with
+    limited backend service experience.
+  visible: true
+  archived: false
+  candidate_label: Low-Match Fixture - Support Profile

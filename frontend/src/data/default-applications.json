@@ -1,0 +1,354 @@
+[
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000001",
+    "skills": [
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "Docker"
+    ],
+    "years_of_experience": 5,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 90000,
+      "max_amount": 118000
+    },
+    "portfolio_url": "https://profiles.example.com/maya",
+    "portfolio_projects": [
+      {
+        "title": "Recruiting API",
+        "description": "Built FastAPI services for structured candidate intake, validation, and recruiter reporting.",
+        "technologies": [
+          "Python",
+          "FastAPI",
+          "PostgreSQL"
+        ]
+      }
+    ],
+    "extracted_text": "Backend engineer with five years building FastAPI services, PostgreSQL schemas, Docker deployments, and reliable internal APIs.",
+    "video_transcript": "I focus on practical backend systems, clear validation, and maintainable API contracts for product teams.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Maya R. - Backend Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000002",
+    "skills": [
+      "Java",
+      "Spring Boot",
+      "Kafka",
+      "Kubernetes"
+    ],
+    "years_of_experience": 7,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 120000,
+      "max_amount": 150000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Senior backend developer with Java, Spring Boot, Kafka event streams, Kubernetes services, and production incident ownership.",
+    "video_transcript": "I have led service migrations and event-driven backend programs with careful rollout planning.", 
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Daniel K. - Senior Java Backend"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000003",
+    "skills": [
+      "Node.js",
+      "TypeScript",
+      "GraphQL",
+      "Prisma"
+    ],
+    "years_of_experience": 4,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 100000,
+      "max_amount": 132000
+    },
+    "portfolio_url": "https://profiles.example.com/noah",
+    "portfolio_projects": [
+      {
+        "title": "GraphQL Profile Platform",
+        "description": "Designed a GraphQL API for profile enrichment and employer-facing candidate search workflows.",
+        "technologies": [
+          "TypeScript",
+          "GraphQL",
+          "Prisma"
+        ]
+      }
+    ],
+    "extracted_text": "TypeScript backend engineer with GraphQL API design, resolver optimization, schema review, and profile platform experience.",
+    "video_transcript": "I enjoy building typed APIs that frontend and backend teams can both trust.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Noah T. - TypeScript API Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000004",
+    "skills": [
+      "Go",
+      "gRPC",
+      "Kubernetes",
+      "Prometheus"
+    ],
+    "years_of_experience": 6,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 115000,
+      "max_amount": 148000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Platform backend engineer building Go services, gRPC contracts, Kubernetes workloads, metrics, tracing, and operational tooling.",
+    "video_transcript": "My recent work has centered on low-latency service APIs and production observability.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Grace L. - Go Platform Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000005",
+    "skills": [
+      "Python",
+      "Django",
+      "REST APIs",
+      "Celery"
+    ],
+    "years_of_experience": 3,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 78000,
+      "max_amount": 99000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Django backend developer with REST API delivery, Celery task processing, database migrations, and customer workflow support.",
+    "video_transcript": "I have maintained production Django apps and improved validation around user-facing data flows.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Amina J. - Django Backend Developer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000006",
+    "skills": [
+      "C#",
+      ".NET",
+      "SQL Server",
+      "Azure"
+    ],
+    "years_of_experience": 5,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 94000,
+      "max_amount": 122000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Backend engineer focused on .NET APIs, SQL Server tuning, Azure services, secure integrations, and enterprise delivery.",
+    "video_transcript": "I work best in service-oriented teams that care about reliability and clear data boundaries.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Chris M. - .NET Backend Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000007",
+    "skills": [
+      "Ruby",
+      "Rails",
+      "PostgreSQL",
+      "Sidekiq"
+    ],
+    "years_of_experience": 4,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 98000,
+      "max_amount": 128000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Rails backend engineer with PostgreSQL query work, Sidekiq jobs, reporting features, and operational support for marketplace systems.",
+    "video_transcript": "I like improving long-lived Rails systems through small, reviewed changes and strong test coverage.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Leah P. - Rails Backend Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000008",
+    "skills": [
+      "Python",
+      "Machine Learning",
+      "FastAPI",
+      "XGBoost"
+    ],
+    "years_of_experience": 6,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 125000,
+      "max_amount": 160000
+    },
+    "portfolio_url": "https://profiles.example.com/ivy",
+    "portfolio_projects": [
+      {
+        "title": "Ranking Service",
+        "description": "Built a ranking API with feature extraction, model inference, score explanations, and monitoring hooks.",
+        "technologies": [
+          "Python",
+          "FastAPI",
+          "XGBoost"
+        ]
+      }
+    ],
+    "extracted_text": "Machine learning backend engineer with FastAPI model services, ranking features, vector retrieval, and explainable scoring systems.",
+    "video_transcript": "I connect model outputs to backend APIs with reliability, traceability, and product usefulness in mind.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Ivy S. - ML Backend Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000009",
+    "skills": [
+      "Scala",
+      "Spark",
+      "Airflow",
+      "S3"
+    ],
+    "years_of_experience": 8,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 130000,
+      "max_amount": 165000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Data backend engineer with Spark pipelines, Airflow orchestration, S3 data lakes, feature preparation, and batch quality checks.",
+    "video_transcript": "I build reliable data jobs that downstream ranking and analytics teams can trust.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Ethan B. - Data Pipeline Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000010",
+    "skills": [
+      "PHP",
+      "Laravel",
+      "MySQL",
+      "Redis"
+    ],
+    "years_of_experience": 4,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 74000,
+      "max_amount": 96000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Laravel backend developer with MySQL query work, queues, Redis caching, validation logic, and employer account features.",
+    "video_transcript": "My recent work has improved backend workflow performance and data validation in Laravel applications.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Joel N. - Laravel Backend Developer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000011",
+    "skills": [
+      "Python",
+      "AWS",
+      "Serverless",
+      "DynamoDB"
+    ],
+    "years_of_experience": 5,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 108000,
+      "max_amount": 140000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Serverless backend engineer with Python Lambda functions, DynamoDB access patterns, event retries, and AWS observability.",
+    "video_transcript": "I build event-driven workflows that handle failures clearly and keep operators informed.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Sophie W. - Serverless Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000012",
+    "skills": [
+      "Rust",
+      "PostgreSQL",
+      "Tokio",
+      "APIs"
+    ],
+    "years_of_experience": 5,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 122000,
+      "max_amount": 158000
+    },
+    "portfolio_url": "https://profiles.example.com/eli",
+    "portfolio_projects": [
+      {
+        "title": "Async API Gateway",
+        "description": "Implemented a Rust API gateway for high-throughput internal data access and structured logging.",
+        "technologies": [
+          "Rust",
+          "Tokio",
+          "PostgreSQL"
+        ]
+      }
+    ],
+    "extracted_text": "Rust backend engineer with async services, PostgreSQL integrations, API performance work, and production observability.",
+    "video_transcript": "I care about fast services, predictable failure handling, and clear operational data.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Eli V. - Rust API Engineer"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000013",
+    "skills": [
+      "Elixir",
+      "Phoenix",
+      "PostgreSQL",
+      "Oban"
+    ],
+    "years_of_experience": 4,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 102000,
+      "max_amount": 136000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Elixir backend developer using Phoenix, PostgreSQL, Oban jobs, concurrent workflows, and operational dashboards.",
+    "video_transcript": "I build backend systems that stay responsive under concurrent user and job processing load.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Marco D. - Elixir Backend Developer"
+  },
+  {
+    "candidate_id": "not-a-valid-uuid",
+    "skills": [
+      "Python",
+      "ETL"
+    ],
+    "years_of_experience": 3,
+    "salary_expectation": {
+      "currency": "USD",
+      "min_amount": 82000,
+      "max_amount": 76000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Invalid fixture with reversed salary range and malformed identifier to test preview error handling.",
+    "video_transcript": "This record should not save because validation needs to catch multiple field errors.",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Invalid Fixture - Broken UUID"
+  },
+  {
+    "candidate_id": "31000000-0000-4000-8000-000000000015",
+    "skills": [],
+    "years_of_experience": -1,
+    "salary_expectation": {
+      "currency": "US",
+      "min_amount": 60000,
+      "max_amount": 80000
+    },
+    "portfolio_projects": [],
+    "extracted_text": "Short text",
+    "video_transcript": "Too short",
+    "visible": true,
+    "archived": false,
+    "candidate_label": "Invalid Fixture - Empty Skills"
+  }
+]

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from functools import lru_cache
+from threading import RLock
+
 from sentence_transformers import SentenceTransformer
 
 from app.config import get_settings
@@ -12,7 +15,13 @@ class LocalEmbeddingProvider(EmbeddingProvider):
     def __init__(self, model_name: str | None = None) -> None:
         settings = get_settings()
         self._model_name = model_name or settings.local_embedding_model
-        self._model = SentenceTransformer(self._model_name)
+        # Force CPU and disable low-memory loading to avoid meta-tensor init failures.
+        self._model = SentenceTransformer(
+            self._model_name,
+            device="cpu",
+            model_kwargs={"low_cpu_mem_usage": False},
+        )
+        self._encode_lock = RLock()
 
     @property
     def provider_name(self) -> str:
@@ -31,7 +40,10 @@ class LocalEmbeddingProvider(EmbeddingProvider):
         if not prepared_texts:
             raise ValueError("texts must contain at least one non-empty string.")
 
-        embeddings = self._model.encode(prepared_texts, convert_to_numpy=True)
+        # SentenceTransformer inference can fail intermittently under concurrent calls.
+        # Serialize encode access on a shared provider instance to keep results stable.
+        with self._encode_lock:
+            embeddings = self._model.encode(prepared_texts, convert_to_numpy=True)
         return embeddings.astype(float).tolist()
 
     @staticmethod
@@ -40,3 +52,8 @@ class LocalEmbeddingProvider(EmbeddingProvider):
         if not cleaned:
             raise ValueError("text must be a non-empty string.")
         return cleaned
+
+
+@lru_cache(maxsize=1)
+def get_local_embedding_provider() -> LocalEmbeddingProvider:
+    return LocalEmbeddingProvider()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -15,8 +17,14 @@ from app.api_errors import (
 )
 from app.config import get_settings
 from app.embeddings.factory import resolve_provider_metadata
+from app.embeddings.local_provider import get_local_embedding_provider
+from app.features.extractor import CandidateJobFeatureExtractor
 from app.pipeline import MatchingPipelineResult, build_matching_pipeline
+from app.retrieval.retriever import InMemorySemanticRetriever
 from app.schemas import CandidateInput, JobInput
+
+
+logger = logging.getLogger(__name__)
 
 
 _CANDIDATE_LIST_ADAPTER = TypeAdapter(list[CandidateInput])
@@ -52,6 +60,7 @@ class BulkMatchResponse(BaseModel):
 
     matches: list[dict[str, Any]]
     candidate_pool_size: int
+    failures: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class ConfigResponse(BaseModel):
@@ -84,9 +93,44 @@ app = FastAPI(
 register_exception_handlers(app)
 
 
+@app.on_event("startup")
+def warm_local_fallback_resources() -> None:
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            get_local_embedding_provider()
+            _cached_local_pipeline()
+            logger.info("Local fallback resources warmed on startup.")
+            return
+        except Exception:
+            logger.exception(
+                "Local fallback warmup attempt %s/%s failed.",
+                attempt,
+                max_attempts,
+            )
+
+    logger.error("Local fallback warmup failed after %s attempts.", max_attempts)
+
+
+@lru_cache(maxsize=1)
+def _cached_pipeline():
+    return build_matching_pipeline()
+
+
+@lru_cache(maxsize=1)
+def _cached_local_pipeline():
+    local_embedding_provider = get_local_embedding_provider()
+    return build_matching_pipeline(
+        retriever=InMemorySemanticRetriever(embedding_provider=local_embedding_provider),
+        feature_extractor=CandidateJobFeatureExtractor(
+            embedding_provider=local_embedding_provider
+        ),
+    )
+
+
 def get_pipeline():
     try:
-        return build_matching_pipeline()
+        return _cached_pipeline()
     except FileNotFoundError as exc:
         raise ApiException(
             status_code=503,
@@ -103,14 +147,46 @@ def get_pipeline():
         raise
 
 
-def serialize_pipeline_result(result: MatchingPipelineResult) -> MatchResponse:
+def get_local_pipeline():
+    return _cached_local_pipeline()
+
+
+def resolve_pipeline_for_request() -> tuple[Any, bool]:
+    settings = get_settings()
+    try:
+        return get_pipeline(), False
+    except ApiException:
+        raise
+    except Exception as exc:
+        logger.exception("Primary pipeline resolution failed; evaluating local fallback.")
+        message = str(exc).lower()
+        if settings.embedding_provider == "gemini" and (
+            is_rate_limit_failure(exc)
+            or is_embedding_failure(exc)
+            or "api key" in message
+            or "authentication" in message
+        ):
+            return get_local_pipeline(), True
+        raise map_runtime_error(exc) from exc
+
+
+def serialize_pipeline_result(
+    result: MatchingPipelineResult,
+    *,
+    fallback_used_override: bool | None = None,
+) -> MatchResponse:
     provider_metadata = get_provider_metadata(result.retrieval_result)
+    fallback_used = (
+        fallback_used_override
+        if fallback_used_override is not None
+        else provider_metadata.fallback_triggered
+    )
     return MatchResponse(
         results=[match_result.model_dump(mode="json") for match_result in result.match_results],
         shortlist_size=len(result.retrieval_result.shortlisted_candidates),
         retrieval_provider=provider_metadata.active_provider,
         retrieval_model=provider_metadata.model_name,
-        retrieval_fallback_used=provider_metadata.fallback_triggered,
+        retrieval_fallback_used=fallback_used,
     )
 
 
@@ -187,12 +263,23 @@ def model_status() -> ModelStatusResponse:
 def match(request: MatchRequest) -> MatchResponse:
     candidates = validate_candidates(request.candidates)
     job = validate_job(request.job)
-    pipeline = get_pipeline()
+    pipeline, fallback_selected = resolve_pipeline_for_request()
     try:
         result = pipeline.run(candidates, job)
     except Exception as exc:
+        logger.exception("Match runtime failure; evaluating fallback path.")
+        settings = get_settings()
+        if settings.embedding_provider == "gemini" and (
+            is_rate_limit_failure(exc) or is_embedding_failure(exc)
+        ):
+            local_pipeline = get_local_pipeline()
+            local_result = local_pipeline.run(candidates, job)
+            return serialize_pipeline_result(local_result, fallback_used_override=True)
         raise map_runtime_error(exc) from exc
-    return serialize_pipeline_result(result)
+    return serialize_pipeline_result(
+        result,
+        fallback_used_override=True if fallback_selected else None,
+    )
 
 
 @app.post(
@@ -203,15 +290,58 @@ def match(request: MatchRequest) -> MatchResponse:
 def bulk_match(request: BulkMatchRequest) -> BulkMatchResponse:
     candidates = validate_candidates(request.candidates)
     jobs = validate_jobs(request.jobs)
-    pipeline = get_pipeline()
     serialized_matches: list[dict[str, Any]] = []
+    serialized_failures: list[dict[str, Any]] = []
+    settings = get_settings()
 
     for job in jobs:
+        fallback_used_override: bool | None = None
         try:
+            pipeline, fallback_selected = resolve_pipeline_for_request()
             result = pipeline.run(candidates, job)
+            provider_metadata = get_provider_metadata(result.retrieval_result)
+            fallback_used_override = True if fallback_selected else None
         except Exception as exc:
-            raise map_runtime_error(exc) from exc
-        provider_metadata = get_provider_metadata(result.retrieval_result)
+            logger.exception("Bulk match runtime failure for job_id=%s.", job.job_id)
+            if settings.embedding_provider == "gemini" and (
+                is_rate_limit_failure(exc) or is_embedding_failure(exc)
+            ):
+                try:
+                    local_pipeline = get_local_pipeline()
+                    result = local_pipeline.run(candidates, job)
+                    provider_metadata = get_provider_metadata(result.retrieval_result)
+                    fallback_used_override = True
+                except Exception as fallback_exc:
+                    logger.exception(
+                        "Bulk match local fallback failure for job_id=%s.",
+                        job.job_id,
+                    )
+                    mapped_error = map_runtime_error(fallback_exc)
+                    serialized_failures.append(
+                        {
+                            "job_id": str(job.job_id),
+                            "error": {
+                                "status": mapped_error.status_code,
+                                "code": mapped_error.code,
+                                "message": mapped_error.message,
+                            },
+                        }
+                    )
+                    continue
+            else:
+                mapped_error = map_runtime_error(exc)
+                serialized_failures.append(
+                    {
+                        "job_id": str(job.job_id),
+                        "error": {
+                            "status": mapped_error.status_code,
+                            "code": mapped_error.code,
+                            "message": mapped_error.message,
+                        },
+                    }
+                )
+                continue
+
         serialized_matches.append(
             {
                 "job_id": str(result.job.job_id),
@@ -219,13 +349,18 @@ def bulk_match(request: BulkMatchRequest) -> BulkMatchResponse:
                 "shortlist_size": len(result.retrieval_result.shortlisted_candidates),
                 "retrieval_provider": provider_metadata.active_provider,
                 "retrieval_model": provider_metadata.model_name,
-                "retrieval_fallback_used": provider_metadata.fallback_triggered,
+                "retrieval_fallback_used": (
+                    fallback_used_override
+                    if fallback_used_override is not None
+                    else provider_metadata.fallback_triggered
+                ),
             }
         )
 
     return BulkMatchResponse(
         matches=serialized_matches,
         candidate_pool_size=len(candidates),
+        failures=serialized_failures,
     )
 
 
@@ -314,14 +449,19 @@ def is_embedding_failure(exc: Exception) -> bool:
         for hint in (
             "embedding",
             "connection",
+            "disconnected",
             "deadline",
             "dns",
             "network",
+            "protocol error",
+            "remoteprotocolerror",
+            "server disconnected",
             "service unavailable",
             "timed out",
             "timeout",
             "transport",
             "unavailable",
+            "without sending a response",
         )
     )
 

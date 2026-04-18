@@ -27,6 +27,15 @@ build/
 dist/
 *.egg-info/
 .eggs/
+node_modules/
+frontend/dist/
+frontend/.next/
+frontend/node_modules/
+frontend/*.tsbuildinfo
+frontend/vite.config.d.ts
+frontend/vite.config.js
+logs/
+.dev-pids/
 
 # OS and editor noise
 .DS_Store
@@ -34,10 +43,14 @@ Thumbs.db
 *:Zone.Identifier
 .idea/
 .vscode/
+.codex
+.git-allowed-signers
 
 # Project artifacts
 models/
 data/processed/
+TalentConnect_PRD.pdf
+TalentConnect_PRD.txt
 
 # Temporarily uncomment before first commit to exclude agent-local files
 AGENTS.md

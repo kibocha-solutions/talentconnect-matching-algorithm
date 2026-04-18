@@ -1,0 +1,20 @@
+{
+  "feature_names": [
+    "required_skill_similarity",
+    "nice_to_have_skill_similarity",
+    "experience_gap_years",
+    "experience_alignment_score",
+    "salary_overlap_score",
+    "portfolio_score",
+    "phase1_similarity_score"
+  ],
+  "model_format": "xgboost_booster_json",
+  "random_seed": 42,
+  "training_summary": {
+    "feature_count": 7,
+    "label_max": 1.0,
+    "label_min": 0.019999999552965164,
+    "row_count": 36,
+    "training_rmse": 0.009765484455019971
+  }
+}

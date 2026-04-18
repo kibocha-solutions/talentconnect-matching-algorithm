@@ -12,6 +12,24 @@ extracts ranking features, trains or loads a first-pass XGBoost ranking
 model, and returns ranked match output. It is designed for local
 development, sprint demonstration, and shortlist-assistance evaluation.
 
+## Backend Vs Frontend Functionality
+
+This repository contains two runtime surfaces:
+
+- Backend service (`app/`):
+  FastAPI matching API, schema validation, embeddings, retrieval,
+  feature extraction, and ranking model execution.
+- Frontend console (`frontend/`):
+  Next.js operator console for job and application management,
+  import/export preview, and match-run workflows.
+
+How they relate:
+
+- The backend owns matching logic and internal API endpoints.
+- The frontend owns operator workflows and local workspace state.
+- The frontend can run independently for UX iteration.
+- The backend can run independently for API and pipeline testing.
+
 ## Problem Being Solved
 
 TalentConnect needs a transparent first-pass way to rank candidates
@@ -252,6 +270,50 @@ Useful endpoints:
 - `POST /api/internal/match/bulk`
 
 OpenAPI docs are available at `/docs` when the server is running.
+
+## Frontend App
+
+The frontend is a Next.js App Router project in `frontend/`.
+
+Start it directly:
+
+```bash
+cd /home/codelf/workspace/assignments/TalentConnect/TalentConnectMatchingAlgorithm/frontend
+npm install
+npm run dev
+```
+
+Useful frontend commands:
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+## Run Script Usage (`run.sh`)
+
+Use `run.sh` from the repository root for common local workflows across
+backend and frontend.
+
+Common commands:
+
+```bash
+cd /home/codelf/workspace/assignments/TalentConnect/TalentConnectMatchingAlgorithm
+
+./run.sh start      # Start local stack
+./run.sh restart    # Restart local stack
+./run.sh stop       # Stop local stack
+./run.sh build      # Build project components
+./run.sh status     # Show running status
+./run.sh logs       # Tail service logs
+```
+
+When to use which approach:
+
+- Use `run.sh` for standard local environment lifecycle operations.
+- Use direct commands (`uvicorn`, `npm run dev`, `pytest`) when focusing
+  on one layer or debugging specific components.
 
 ## How To Run Tests
 

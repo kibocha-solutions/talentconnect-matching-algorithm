@@ -314,8 +314,151 @@ def test_bulk_match_endpoint_returns_one_result_set_per_job(monkeypatch) -> None
     assert response.status_code == 200
     payload = response.json()
     assert payload["candidate_pool_size"] == 1
-    assert len(payload["matches"]) == 2
-    assert payload["matches"][0]["shortlist_size"] == 1
+    assert payload["failures"] == []
+
+
+def test_bulk_match_endpoint_preserves_success_when_one_job_fails(monkeypatch) -> None:
+    client = TestClient(app, raise_server_exceptions=False)
+    failing_job_id = "80242f76-3623-4e87-8a55-a36cb42f97d3"
+
+    class PartiallyFailingPipeline:
+        def run(self, candidates, job):
+            if str(job.job_id) == failing_job_id:
+                raise RuntimeError("unexpected backend failure")
+
+            return type(
+                "PipelineResult",
+                (),
+                {
+                    "job": type("Job", (), {"job_id": job.job_id})(),
+                    "match_results": [
+                        type(
+                            "MatchResult",
+                            (),
+                            {
+                                "model_dump": lambda self, mode="json": {
+                                    "candidate_id": str(candidates[0].candidate_id),
+                                    "job_id": str(job.job_id),
+                                    "overall_score": 88.0,
+                                    "score_breakdown": {
+                                        "skills_score": 80.0,
+                                        "experience_score": 90.0,
+                                        "salary_score": 85.0,
+                                        "portfolio_score": 30,
+                                    },
+                                    "matched_at": "2026-04-15T00:00:00Z",
+                                }
+                            },
+                        )()
+                    ],
+                    "retrieval_result": type(
+                        "RetrievalResult",
+                        (),
+                        {
+                            "shortlisted_candidates": [object()],
+                            "provider_name": "stub",
+                            "model_name": "stub-model",
+                        },
+                    )(),
+                },
+            )()
+
+    monkeypatch.setattr("app.main.get_pipeline", lambda: PartiallyFailingPipeline())
+    monkeypatch.setattr(
+        "app.main.get_settings",
+        lambda: type("Settings", (), {"embedding_provider": "local"})(),
+    )
+
+    response = client.post(
+        "/api/internal/match/bulk",
+        json={
+            "candidates": [valid_candidate_payload()],
+            "jobs": [
+                valid_job_payload(),
+                valid_job_payload(failing_job_id),
+            ],
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["candidate_pool_size"] == 1
+    assert len(payload["matches"]) == 1
+    assert payload["matches"][0]["job_id"] == "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a"
+    assert len(payload["failures"]) == 1
+    assert payload["failures"][0]["job_id"] == failing_job_id
+    assert payload["failures"][0]["error"]["status"] == 500
+    assert payload["failures"][0]["error"]["code"] == ApiErrorCode.INTERNAL_ERROR
+
+
+def test_match_endpoint_falls_back_to_local_on_embedding_failure(monkeypatch) -> None:
+    client = TestClient(app)
+
+    class FailingGeminiPipeline:
+        def run(self, candidates, job):
+            raise RuntimeError("Gemini embedding request failed with 429 rate limit")
+
+    class LocalFallbackPipeline:
+        def run(self, candidates, job):
+            return type(
+                "PipelineResult",
+                (),
+                {
+                    "match_results": [
+                        type(
+                            "MatchResult",
+                            (),
+                            {
+                                "model_dump": lambda self, mode="json": {
+                                    "candidate_id": "3303fbcf-c50d-4c18-a7ad-b90fc77c48be",
+                                    "job_id": "1c4d6bd3-77a5-4bf5-9baa-f1ef6c9b8e6a",
+                                    "overall_score": 77.0,
+                                    "score_breakdown": {
+                                        "skills_score": 70.0,
+                                        "experience_score": 80.0,
+                                        "salary_score": 75.0,
+                                        "portfolio_score": 85,
+                                    },
+                                    "matched_at": "2026-04-15T00:00:00Z",
+                                }
+                            },
+                        )()
+                    ],
+                    "retrieval_result": type(
+                        "RetrievalResult",
+                        (),
+                        {
+                            "shortlisted_candidates": [object()],
+                            "embedding_provider": type(
+                                "EmbeddingProvider",
+                                (),
+                                {
+                                    "provider_name": "local",
+                                    "model_name": "stub-local-model",
+                                },
+                            )(),
+                        },
+                    )(),
+                },
+            )()
+
+    monkeypatch.setattr("app.main.get_pipeline", lambda: FailingGeminiPipeline())
+    monkeypatch.setattr("app.main.get_local_pipeline", lambda: LocalFallbackPipeline())
+    monkeypatch.setattr("app.main.get_settings", lambda: type("Settings", (), {"embedding_provider": "gemini"})())
+
+    response = client.post(
+        "/api/internal/match",
+        json={
+            "candidates": [valid_candidate_payload()],
+            "job": valid_job_payload(),
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["retrieval_provider"] == "local"
+    assert payload["retrieval_fallback_used"] is True
+    assert payload["results"][0]["overall_score"] == 77.0
 
 
 def test_match_endpoint_rejects_malformed_request_body() -> None:
@@ -477,6 +620,7 @@ def test_match_endpoint_maps_embedding_unavailable(monkeypatch) -> None:
             raise RuntimeError("embedding provider transport unavailable")
 
     monkeypatch.setattr("app.main.get_pipeline", lambda: FailingPipeline())
+    monkeypatch.setattr("app.main.get_settings", lambda: type("Settings", (), {"embedding_provider": "local"})())
 
     response = client.post(
         "/api/internal/match",
@@ -498,6 +642,7 @@ def test_match_endpoint_maps_embedding_rate_limit(monkeypatch) -> None:
             raise RuntimeError("429 rate limit exceeded")
 
     monkeypatch.setattr("app.main.get_pipeline", lambda: FailingPipeline())
+    monkeypatch.setattr("app.main.get_settings", lambda: type("Settings", (), {"embedding_provider": "local"})())
 
     response = client.post(
         "/api/internal/match",

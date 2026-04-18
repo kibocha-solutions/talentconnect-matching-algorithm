@@ -71,8 +71,8 @@ def test_build_embedding_provider_falls_back_from_gemini_when_rate_limited(
         lambda: FakeGeminiProvider(should_fail=True),
     )
     monkeypatch.setattr(
-        "app.embeddings.factory.LocalEmbeddingProvider",
-        FakeLocalProvider,
+        "app.embeddings.factory.get_local_embedding_provider",
+        lambda: FakeLocalProvider(),
     )
     reset_settings_cache()
 
@@ -87,5 +87,59 @@ def test_build_embedding_provider_falls_back_from_gemini_when_rate_limited(
     assert metadata.fallback_triggered is True
     assert metadata.fallback_reason is not None
     assert "local embeddings were used instead" in metadata.fallback_reason.lower()
+
+    reset_settings_cache()
+
+
+def test_build_embedding_provider_retries_gemini_after_fallback(
+    monkeypatch,
+) -> None:
+    class FlakyGeminiProvider(EmbeddingProvider):
+        def __init__(self) -> None:
+            self.calls = 0
+            self.model_name = "gemini-flaky-model"
+
+        @property
+        def provider_name(self) -> str:
+            return "gemini"
+
+        def embed_text(self, text: str) -> EmbeddingVector:
+            self.calls += 1
+            if self.calls == 1:
+                raise RuntimeError("429 rate limit exceeded")
+            return [1.0, 0.0]
+
+        def embed_texts(self, texts: list[str]) -> EmbeddingBatch:
+            self.calls += 1
+            if self.calls == 1:
+                raise RuntimeError("429 rate limit exceeded")
+            return [[1.0, 0.0] for _ in texts]
+
+    monkeypatch.setenv("EMBEDDING_PROVIDER", "gemini")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        "app.embeddings.factory.GeminiEmbeddingProvider",
+        FlakyGeminiProvider,
+    )
+    monkeypatch.setattr(
+        "app.embeddings.factory.get_local_embedding_provider",
+        lambda: FakeLocalProvider(),
+    )
+    reset_settings_cache()
+
+    provider = build_embedding_provider()
+
+    first_vector = provider.embed_text("python")
+    first_metadata = resolve_provider_metadata(provider)
+    second_vector = provider.embed_text("fastapi")
+    second_metadata = resolve_provider_metadata(provider)
+
+    assert first_vector == [0.0, 1.0]
+    assert first_metadata.active_provider == "local"
+    assert first_metadata.fallback_triggered is True
+
+    assert second_vector == [1.0, 0.0]
+    assert second_metadata.active_provider == "gemini"
+    assert second_metadata.model_name == "gemini-flaky-model"
 
     reset_settings_cache()

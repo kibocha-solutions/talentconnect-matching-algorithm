@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 from typing import Any
 from uuid import uuid4
 
@@ -142,6 +143,8 @@ def register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def handle_unexpected_exception(request: Request, exc: Exception) -> JSONResponse:
+        logger = logging.getLogger("talentconnect.api")
+        logger.exception("Unhandled API exception for %s %s", request.method, request.url.path)
         return build_error_response(
             request=request,
             status_code=500,

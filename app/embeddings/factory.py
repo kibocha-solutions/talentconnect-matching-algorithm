@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from threading import RLock
 
 from app.config import get_settings
 from app.embeddings.base import EmbeddingBatch, EmbeddingProvider, EmbeddingVector
 from app.embeddings.gemini_provider import GeminiEmbeddingProvider
-from app.embeddings.local_provider import LocalEmbeddingProvider
+from app.embeddings.local_provider import get_local_embedding_provider
 
 _FALLBACK_HINTS = (
     "429",
@@ -18,13 +19,17 @@ _FALLBACK_HINTS = (
     "dns",
     "internal",
     "network",
+    "protocol error",
+    "remoteprotocolerror",
     "rate limit",
     "resource exhausted",
+    "server disconnected",
     "service unavailable",
     "timed out",
     "timeout",
     "transport",
     "unavailable",
+    "without sending a response",
 )
 
 
@@ -47,15 +52,20 @@ class ConfiguredEmbeddingProvider(EmbeddingProvider):
         self._requested_provider = settings.embedding_provider
         self._fallback_triggered = False
         self._fallback_reason: str | None = None
+        self._provider_lock = RLock()
         self._provider = self._build_primary_provider()
+        self._active_provider_name = self._provider.provider_name
+        self._active_model_name = getattr(self._provider, "model_name", "unknown")
 
     @property
     def provider_name(self) -> str:
-        return self._provider.provider_name
+        with self._provider_lock:
+            return self._active_provider_name
 
     @property
     def model_name(self) -> str:
-        return getattr(self._provider, "model_name", "unknown")
+        with self._provider_lock:
+            return self._active_model_name
 
     @property
     def resolution(self) -> EmbeddingProviderResolution:
@@ -75,31 +85,49 @@ class ConfiguredEmbeddingProvider(EmbeddingProvider):
 
     def _build_primary_provider(self) -> EmbeddingProvider:
         settings = get_settings()
-        settings.validate_embedding_provider()
-
         if settings.prefers_gemini_embeddings:
+            if not settings.gemini_api_key:
+                self._fallback_triggered = True
+                self._fallback_reason = (
+                    "Gemini embeddings were requested but GEMINI_API_KEY was not configured. "
+                    "Local embeddings were used instead."
+                )
+                return get_local_embedding_provider()
             return GeminiEmbeddingProvider()
-        return LocalEmbeddingProvider()
+        return get_local_embedding_provider()
 
     def _run_with_fallback(self, operation):
+        with self._provider_lock:
+            provider = self._provider
+
         try:
-            return operation(self._provider)
+            result = operation(provider)
+            with self._provider_lock:
+                self._active_provider_name = provider.provider_name
+                self._active_model_name = getattr(provider, "model_name", "unknown")
+            return result
         except Exception as exc:
-            if not self._should_fallback(exc):
+            if not self._should_fallback(exc, provider.provider_name):
                 raise
 
-            self._fallback_triggered = True
-            self._fallback_reason = (
-                "Gemini embedding request failed and local embeddings were used instead: "
-                f"{type(exc).__name__}: {exc}"
-            )
-            self._provider = LocalEmbeddingProvider()
-            return operation(self._provider)
+            local_provider = get_local_embedding_provider()
+            with self._provider_lock:
+                if provider.provider_name == "gemini":
+                    self._fallback_triggered = True
+                    self._fallback_reason = (
+                        "Gemini embedding request failed and local embeddings were used "
+                        f"instead: {type(exc).__name__}: {exc}"
+                    )
+            result = operation(local_provider)
+            with self._provider_lock:
+                self._active_provider_name = local_provider.provider_name
+                self._active_model_name = getattr(local_provider, "model_name", "unknown")
+            return result
 
-    def _should_fallback(self, exc: Exception) -> bool:
+    def _should_fallback(self, exc: Exception, provider_name: str) -> bool:
         if self._requested_provider != "gemini":
             return False
-        if self._provider.provider_name != "gemini":
+        if provider_name != "gemini":
             return False
 
         message = str(exc).lower()
